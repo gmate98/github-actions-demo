@@ -5,7 +5,7 @@ on:
     branches: [main]  
 
 jobs:
-  Building_32-bit:
+  Building_and_Testing_32-bit:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/${{github.repository}}/build-environment
@@ -65,7 +65,7 @@ jobs:
           name: build
           path: build
 
-      # Create deployable artifact (e.g., .zip or .tar.gz)
+      # Create deployable artifact
       - name: Package artifact
         run: |
           tar -czvf hhla_sky_safety_controller.tar.gz -C build .
