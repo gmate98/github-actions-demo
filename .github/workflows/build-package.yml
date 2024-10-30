@@ -5,7 +5,7 @@ on:
     branches: [main]  
 
 jobs:
-  build:
+  Building:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/${{github.repository}}/build-environment
@@ -31,11 +31,6 @@ jobs:
         run: |
           cmake --build ./build -j$(nproc --all)
 
-      # Run tests using CTest
-      - name: Run tests
-        run: |
-          ctest --test-dir ./build -j$(nproc --all) -C Debug -T test
-
       # Create issue on failure
       - name: Create issue on failure
         if: failure()
@@ -45,12 +40,18 @@ jobs:
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
 
-  # tests:
-  #   needs: build
-  #   if: success()
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v4
-  #       with:
-  #         ref: main
+  Testing:
+    needs: Building
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: main
+
+      # Run tests using CTest
+      - name: Run tests
+        run: |
+          ctest --test-dir ./build -j$(nproc --all) -C Debug -T test
