@@ -8,4 +8,5 @@ RUN apt update && apt install -y \
     binutils \
     gcc-multilib \
     g++-multilib \
-    gcovr
+    gcovr \
+    git
