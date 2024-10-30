@@ -2,7 +2,7 @@ name: HHLA Sky Safety Controller CI
 
 on:
   push:
-    branches: [master]  
+    branches: [main]  
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: main
 
       # Configure the project using CMake
       - name: Configure with CMake
@@ -52,4 +52,4 @@ jobs:
   #     - name: Checkout Repository
   #       uses: actions/checkout@v4
   #       with:
-  #         ref: master
+  #         ref: main

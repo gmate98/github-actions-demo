@@ -3,7 +3,7 @@ name: Build build-environment Docker Image
 on:
   push:
     branches: 
-      - master
+      - main
     paths:
       - ".github/workflows/build-environment.yml"
       - "environments/build-environment/**"
@@ -15,7 +15,7 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
       with:
-        ref: master
+        ref: main
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
