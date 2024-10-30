@@ -37,7 +37,7 @@ jobs:
         with:
           name: build
           path: build
-          
+
       # Create issue on failure
       - name: Create issue on failure
         if: failure()
@@ -63,11 +63,6 @@ jobs:
         with:
           submodules: recursive
           ref: main
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: build
 
       # Run tests using CTest
       - name: Run tests
