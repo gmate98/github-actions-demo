@@ -31,13 +31,12 @@ jobs:
         run: |
           cmake --build ./build -j$(nproc --all)
       
-      - name: Upload build artifact
+      # Run tests using CTest
+      - name: Run tests
         if: success()
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          path: build
-
+        run: |
+          ctest --test-dir ./build -j$(nproc --all) -C Debug -T test
+      
       # Create issue on failure
       - name: Create issue on failure
         if: failure()
@@ -46,27 +45,6 @@ jobs:
           title: "Build Failed on ${{ github.repository }}"
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
-
-  Testing_32-bit:
-    needs: Building_32-bit
-    if: success()
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{github.repository}}/build-environment
-      credentials:
-        username: ${{github.actor}}
-        password: ${{secrets.GITHUB_TOKEN}}
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          ref: main
-
-      # Run tests using CTest
-      - name: Run tests
-        run: |
-          ctest --test-dir ./build -j$(nproc --all) -C Debug -T test
-  
+      
+      
     
