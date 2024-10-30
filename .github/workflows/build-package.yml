@@ -35,7 +35,7 @@ jobs:
       - name: Run tests
         if: success()
         run: |
-          ctest --test-dir ./build -j$(nproc --all) -C Debug -T test
+          ctest --test-dir ./build -j$(nproc --all) -C Debug
       
       # Create issue on failure
       - name: Create issue on failure
