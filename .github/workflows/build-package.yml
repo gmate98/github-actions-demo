@@ -55,7 +55,7 @@ jobs:
           labels: bug, build-failure
 
   Deploy:
-    needs: Building_32-bit
+    needs: Building_and_Testing_32-bit
     runs-on: ubuntu-latest
     
     steps:
