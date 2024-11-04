@@ -12,6 +12,8 @@ int main() {
     std::cout << "Sum: " << add(2, 3) << std::endl;
     std::cout << "Substract: " << subtract(3, 2) << std::endl;
     std::cout << "Substract: " << subtract(5, 2) << std::endl;
+    std::cout << "Substract: " << subtract(5, 2) << std::endl;
+
     //sirock
     return 0;
 }
