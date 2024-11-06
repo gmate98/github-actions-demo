@@ -20,6 +20,18 @@ jobs:
           submodules: recursive
           ref: main
 
+      - name: Setup Ubuntu
+        run: |
+          apt update && apt install -y \
+          build-essential \
+          cmake \
+          build-essential \
+          binutils \
+          gcc-multilib \
+          g++-multilib \
+          gcovr \
+          git
+
       # Configure the project using CMake
       - name: Configure with CMake
         run: |
