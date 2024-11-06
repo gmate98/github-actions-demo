@@ -1,14 +1,15 @@
 name: Build STM32 Project
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_run:
+    workflows: ["HHLA Sky Safety Controller CI/CD"]
+    types:
+      - completed
 
 jobs:
-  Building_and_Testing_32-bit:
+  Building for microcontroller:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     container:
       image: ghcr.io/${{github.repository}}/build-environment
       credentials:
@@ -24,18 +25,21 @@ jobs:
 
       - name: Set up ARM GCC Toolchain
         run: |
-          sudo apt update
-          sudo apt install -y gcc-arm-none-eabi
-
+          PATH=./tools/bin:$PATH
+          LD_LIBRARY_PATH=./tools/lib:$LD_LIBRARY_PATH   
+          
       - name: Compile STM32 Project
         run: |
-          cd safety_controller/safety_controller_MC3
+          cd Debug
           make clean
-          make
+          make all      
 
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: STM32-Build
-          path: STM32-Build.tar.gz
+          name: STM32-Microcontroller_Binary
+          path: *.elf
+      
+      
+      

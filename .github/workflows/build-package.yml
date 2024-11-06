@@ -30,20 +30,22 @@ jobs:
       - name: Build project
         run: |
           cmake --build build -j$(nproc --all)
-
+      
       # Run tests using CTest without verbose output to reduce warnings
       - name: Run tests
         if: success()
         run: |
           ctest --test-dir build -j$(nproc --all) -C Debug
 
-      # Upload build directory as artifact for further jobs if needed
-      - name: Upload build artifact
-        if: success()
-        uses: actions/upload-artifact@v3
-        with:
-          name: build
-          path: build
+          
+      # # Upload build directory as artifact for further jobs if needed
+      # - name: Upload build artifact
+      #   if: success()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: build
+      #     path: build
+      
 
       # Create issue on failure
       - name: Create issue on failure
@@ -54,25 +56,4 @@ jobs:
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
 
-  Deploy:
-    needs: Building_and_Testing_32-bit
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: build
-          path: build
-
-      # Create deployable artifact
-      - name: Package artifact
-        run: |
-          tar -czvf hhla_sky_safety_controller.tar.gz -C build .
-
-      # Upload final artifact
-      - name: Upload deployable artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: hhla_sky_safety_controller
-          path: hhla_sky_safety_controller.tar.gz
+      
