@@ -25,8 +25,8 @@ jobs:
 
       - name: Set up ARM GCC Toolchain
         run: |
-          PATH=./tools/bin:$PATH
-          LD_LIBRARY_PATH=./tools/lib:$LD_LIBRARY_PATH   
+          PATH=$(pwd)/tools/bin:$PATH
+          LD_LIBRARY_PATH=$(pwd)/tools/lib:$LD_LIBRARY_PATH   
           
       - name: Compile STM32 Project
         run: |
