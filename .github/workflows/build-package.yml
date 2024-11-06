@@ -7,11 +7,11 @@ on:
 jobs:
   Building_and_Testing_32-bit:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{github.repository}}/build-environment
-      credentials:
-        username: ${{github.actor}}
-        password: ${{secrets.GITHUB_TOKEN}}
+    # container:
+    #   image: ghcr.io/${{github.repository}}/build-environment
+    #   credentials:
+    #     username: ${{github.actor}}
+    #     password: ${{secrets.GITHUB_TOKEN}}
     
     steps:
       - name: Checkout Repository
