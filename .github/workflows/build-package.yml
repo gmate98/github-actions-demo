@@ -70,6 +70,10 @@ jobs:
           name: build
           path: build
 
+      # Grant execute permissions to test binaries
+      - name: Grant execute permissions to test binaries
+        run: chmod +x build/tests/*
+
       # Run tests using CTest without verbose output to reduce warnings
       - name: Run tests
         run: |
@@ -83,3 +87,4 @@ jobs:
           title: "Test Failed on ${{ github.repository }}"
           content-filepath: ./test-failure.txt
           labels: bug, test-failure
+
