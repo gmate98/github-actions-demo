@@ -33,7 +33,7 @@ jobs:
       - name: Flash to MCU and test
         run: |
           cd mcu_test_proj/Debug
-          $(HOME)/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d test_elfs/blink.elf -g
+          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d test_elfs/blink.elf -g
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v3
