@@ -25,9 +25,9 @@ jobs:
 
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
         run: |
-          PATH=$(pwd)/tools/bin:$PATH
-          LD_LIBRARY_PATH=$(pwd)/tools/lib:$LD_LIBRARY_PATH
-          cd Debug
+          PATH=$(pwd)/tools/gcc/bin:$PATH
+          LD_LIBRARY_PATH=$(pwd)/tools/gcc/lib:$LD_LIBRARY_PATH
+          cd mcu_test_proj/Debug
           make clean
           make all
 
@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: STM32-Microcontroller_Binary
-          path: Debug/*.elf
+          path: mcu_test_proj/Debug/*.elf
       
       
       
