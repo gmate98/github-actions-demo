@@ -51,7 +51,7 @@ jobs:
         if: failure()
         uses: peter-evans/create-issue-from-file@v5
         with:
-          title: "Build Failed on ${{ github.repository }}"
+          title: "Build Failed"
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
 
@@ -84,7 +84,7 @@ jobs:
         if: failure()
         uses: peter-evans/create-issue-from-file@v5
         with:
-          title: "Test Failed on ${{ github.repository }}"
+          title: "Test Failed"
           content-filepath: ./test-failure.txt
           labels: bug, test-failure
 

@@ -30,16 +30,26 @@ jobs:
           cd mcu_test_proj/Debug
           make clean
           make all
+
       - name: Flash to MCU and test
         run: |
           cd mcu_test_proj/Debug
           ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d build.elf -g
+      
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v3
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/Debug/*.elf
+
+      - name: Create issue on failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Building for microcontroller failed"
+          content-filepath: ./build-failure.txt
+          labels: bug, build-failure
       
       
       
