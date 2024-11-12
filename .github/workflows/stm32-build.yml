@@ -33,16 +33,7 @@ jobs:
       - name: Flash to MCU and test
         run: |
           cd mcu_test_proj/Debug
-          BOLD=$(tput bold)
-          RED=$(tput setaf 1)
-          RESET=$(tput sgr0)
-          echo "${BOLD}Test if STM32_Programmer_CLI is installed! ${RESET}"
-          cmd_out=$($(HOME)/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI --version) 
-          if [ -z "$cmd_out"]; then
-            echo "${BOLD}${RED}STM32_Programmer_CLI is not installed! (v2.17.0) ${RESET}"
-          else
-            $(HOME)/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d test_elfs/blink.elf -g
-          fi 
+          $(HOME)/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d test_elfs/blink.elf -g
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v3
