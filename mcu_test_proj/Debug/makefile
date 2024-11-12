@@ -60,8 +60,8 @@ all: main-build
 main-build: build.elf secondary-outputs
 
 # Tool invocations
-build.elf build.map: $(OBJS) $(USER_OBJS) /home/medin/act_trial/github-actions-demo/mcu_test_proj/STM32L152RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "build.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"/home/medin/act_trial/github-actions-demo/mcu_test_proj/STM32L152RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="build.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+build.elf build.map: $(OBJS) $(USER_OBJS) ../STM32L152RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "build.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"../STM32L152RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="build.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
