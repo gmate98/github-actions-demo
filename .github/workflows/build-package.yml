@@ -3,17 +3,19 @@ name: HHLA Sky Safety Controller CI/CD
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
     runs-on: self-hosted
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: main
+          ref: ${{ github.ref }}
 
       - name: Setup Ubuntu
         run: |
@@ -87,4 +89,3 @@ jobs:
           title: "Test Failed"
           content-filepath: ./test-failure.txt
           labels: bug, test-failure
-
