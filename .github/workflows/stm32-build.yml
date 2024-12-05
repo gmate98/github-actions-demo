@@ -26,16 +26,17 @@ jobs:
 
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
         run: |
+          cd mcu_test_proj
           PATH=$(pwd)/tools/gcc/bin:$PATH
           LD_LIBRARY_PATH=$(pwd)/tools/gcc/lib:$LD_LIBRARY_PATH
-          cd mcu_test_proj/Debug
-          make clean
-          make all
+          rm -rf build
+          cmake . --preset=gcc-debug
+          cmake --build --preset=gcc-debug
 
       - name: Flash to MCU and test
         run: |
-          cd mcu_test_proj/Debug
-          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d build.elf -g
+          cd build/gcc-debug
+          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
       
       - name: Upload Build Artifacts
         if: success()
