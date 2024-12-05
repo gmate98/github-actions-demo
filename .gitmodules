@@ -1,3 +1,7 @@
 [submodule "externals/googletest"]
 	path = externals/googletest
 	url = https://github.com/google/googletest.git
+
+[submodule "gnu-tools-for-stm32"]
+	path = gnu-tools-for-stm32
+	url = https://github.com/STMicroelectronics/gnu-tools-for-stm32
