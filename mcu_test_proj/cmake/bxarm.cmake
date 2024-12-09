@@ -10,7 +10,7 @@ set(CMAKE_CXX_COMPILER /opt/iarsystems/bxarm/arm/bin/iccarm)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # Specify general C flags
-set(CMAKE_C_FLAGS "-e --dlib_config full")
+set(CMAKE_C_FLAGS "-e --dlib_config full --cpu=cortex-m3")
 #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} --debug")
 #set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS}")
 

@@ -38,8 +38,8 @@
             "binaryDir": "${sourceDir}/build/bxarm-debug",
             "toolchainFile": "cmake/bxarm.cmake",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-gcc",
-                "CMAKE_CXX_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-g++",
+                "CMAKE_C_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
+                "CMAKE_CXX_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_TOOLCHAIN_FILE": "cmake/bxarm.cmake"
             }
@@ -51,8 +51,8 @@
             "binaryDir": "${sourceDir}/build/bxarm-release",
             "toolchainFile": "cmake/bxarm.cmake",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-gcc",
-                "CMAKE_CXX_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-g++",
+                "CMAKE_C_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
+                "CMAKE_CXX_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_TOOLCHAIN_FILE": "cmake/bxarm.cmake"
             }
