@@ -9,7 +9,7 @@ on:
 jobs:
   Building_for_microcontroller:
     name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }}"
-    runs-on: self-hosted
+    runs-on: [ self-hosted, linux ]
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
@@ -37,7 +37,7 @@ jobs:
 
       - name: Flash to MCU and test
         run: |
-          cd build/gcc-debug
+          cd mcu_test_proj/build/gcc-debug
           ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
 
       - name: Upload Build Artifacts
