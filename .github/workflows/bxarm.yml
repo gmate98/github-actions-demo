@@ -1,11 +1,11 @@
 name: BXARM on Linux
 
 # This workflow will run when a push is made to any branch in the repository
-on:
-  workflow_run:
-    workflows: ["HHLA Sky Safety Controller CI/CD"]
-    types:
-      - completed
+on: push
+  # workflow_run:
+  #   workflows: ["HHLA Sky Safety Controller CI/CD"]
+  #   types:
+  #     - completed
 
 # Workflow's environment variables can be referred by all jobs
 # env:
@@ -14,18 +14,18 @@ on:
 
 jobs:
   Building_for_microcontroller:
-    name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }} "
+    name: "Build STM32 Project - Commit:" #${{ github.event.workflow_run.head_commit.message }}
     runs-on: [ self-hosted, linux ]
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
           ref: Combination-of-toolchains
-        
+
       - name: Set up BXARM Toolchain and Compile STM32 Project
-        run: |             
+        run: |
             cd mcu_test_proj
             rm -rf build
             cmake . --preset=bxarm-debug
@@ -51,10 +51,10 @@ jobs:
 
       - name: Flash to MCU and test
         run: |
-          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g           
-      
+          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
 
-# Update `needs` to `build-project` if you do not have C-STAT and/or C-RUN enabled for your license          
+
+# Update `needs` to `build-project` if you do not have C-STAT and/or C-RUN enabled for your license
   # deploy:
   #   name: Deploy firmware
   #   runs-on: [ self-hosted, linux ]
@@ -79,4 +79,4 @@ jobs:
   #       with:
   #         name: firmwares-srec-hex
   #         path: ./output/*.*
-  #         if-no-files-found: error            
+  #         if-no-files-found: error
