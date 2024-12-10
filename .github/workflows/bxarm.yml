@@ -1,7 +1,7 @@
 name: BXARM on Linux
 
 env:
- BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
 
 on:
   workflow_run:
@@ -11,15 +11,16 @@ on:
 
 jobs:
   Building_for_microcontroller:
-    name: "Build STM32 Project - Commit:" #${{ github.event.workflow_run.head_commit.message }}
+    name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }}"
     runs-on: [ self-hosted, linux ]
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: ${{ github.ref }}
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Set up BXARM Toolchain and Compile STM32 Project
         run: |
@@ -35,10 +36,11 @@ jobs:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/bxarm-debug/*.elf
 
-
   deploy:
     name: Deploy firmware
     runs-on: [ self-hosted, linux ]
+    needs: Building_for_microcontroller
+
     steps:
       - name: Download ELF
         uses: actions/download-artifact@v4
@@ -49,31 +51,3 @@ jobs:
       - name: Flash to MCU and test
         run: |
           ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
-
-
-# Update `needs` to `build-project` if you do not have C-STAT and/or C-RUN enabled for your license
-  # deploy:
-  #   name: Deploy firmware
-  #   runs-on: [ self-hosted, linux ]
-  #   steps:
-  #     - name: Download ELF
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: project
-  #         path: ./
-
-  #     - name: Convert to SREC
-  #       run: |
-  #            mkdir output
-  #            $TARGET_DIR/ielftool --srec --verbose project.out output/project.srec
-
-  #     - name: Convert to HEX
-  #       run: |
-  #            $TARGET_DIR/ielftool --ihex --verbose project.out output/project.hex
-
-  #     - name: Upload firmwares
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: firmwares-srec-hex
-  #         path: ./output/*.*
-  #         if-no-files-found: error
