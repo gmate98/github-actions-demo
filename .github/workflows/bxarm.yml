@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: Combination-of-toolchains
+          ref: main
 
       - name: Set up BXARM Toolchain and Compile STM32 Project
         run: |
