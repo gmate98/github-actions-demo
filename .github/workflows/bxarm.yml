@@ -1,7 +1,11 @@
 name: BXARM on Linux
 
 # This workflow will run when a push is made to any branch in the repository
-on: push
+on:
+  workflow_run:
+    workflows: ["HHLA Sky Safety Controller CI/CD"]
+    types:
+      - completed
 
 # Workflow's environment variables can be referred by all jobs
 # env:
@@ -9,10 +13,17 @@ on: push
 #   COMMON_DIR: /opt/iarsystems/bxarm-9.50.1/common/bin
 
 jobs:
-  build-project:
-    name: Build project
+  Building_for_microcontroller:
+    name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }} "
     runs-on: [ self-hosted, linux ]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: Combination-of-toolchains
+        
       - name: Set up BXARM Toolchain and Compile STM32 Project
         run: |             
             cd mcu_test_proj
