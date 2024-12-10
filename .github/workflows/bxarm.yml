@@ -1,8 +1,5 @@
 name: BXARM on Linux
 
-env:
-  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-
 on:
   workflow_run:
     workflows: ["HHLA Sky Safety Controller CI/CD"]

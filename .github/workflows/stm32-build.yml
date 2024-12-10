@@ -1,10 +1,12 @@
 name: Build STM32 Project
 
-on:
-  workflow_run:
-    workflows: ["HHLA Sky Safety Controller CI/CD"]
-    types:
-      - completed
+on: 
+  push: 
+    branches : main
+  # workflow_run:
+  #   workflows: ["HHLA Sky Safety Controller CI/CD"]
+  #   types:
+  #     - completed
 
 jobs:
   Building_for_microcontroller:
