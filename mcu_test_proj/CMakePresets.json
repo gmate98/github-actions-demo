@@ -1,0 +1,83 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21
+    },
+    "configurePresets": [
+        {
+            "name": "gcc-debug",
+            "description": "Build using the gcc-arm-none-eabi toolchain in Debug mode",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/gcc-debug",
+            "toolchainFile": "cmake/gcc-arm-none-eabi.cmake",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-gcc",
+                "CMAKE_CXX_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-g++",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "cmake/gcc-arm-none-eabi.cmake"
+            }
+        },
+        {
+            "name": "gcc-release",
+            "description": "Build using the gcc-arm-none-eabi toolchain in Release mode",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/gcc-release",
+            "toolchainFile": "cmake/gcc-arm-none-eabi.cmake",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-gcc",
+                "CMAKE_CXX_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-g++",
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "cmake/gcc-arm-none-eabi.cmake"
+            }
+        },
+        {
+            "name": "bxarm-debug",
+            "description": "Build using the bxarm toolchain in Debug mode",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/bxarm-debug",
+            "toolchainFile": "cmake/bxarm.cmake",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
+                "CMAKE_CXX_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "cmake/bxarm.cmake"
+            }
+        },
+        {
+            "name": "bxarm-release",
+            "description": "Build using the bxarm toolchain in Release mode",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/bxarm-release",
+            "toolchainFile": "cmake/bxarm.cmake",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
+                "CMAKE_CXX_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "cmake/bxarm.cmake"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gcc-debug",
+            "description": "Build the project using the gcc-arm-none-eabi toolchain in Debug mode",
+            "configurePreset": "gcc-debug"
+        },
+        {
+            "name": "gcc-release",
+            "description": "Build the project using the gcc-arm-none-eabi toolchain in Release mode",
+            "configurePreset": "gcc-release"
+        },
+        {
+            "name": "bxarm-debug",
+            "description": "Build the project using the bxarm toolchain in Debug mode",
+            "configurePreset": "bxarm-debug"
+        },
+        {
+            "name": "bxarm-release",
+            "description": "Build the project using the bxarm toolchain in Release mode",
+            "configurePreset": "bxarm-release"
+        }
+    ]
+}

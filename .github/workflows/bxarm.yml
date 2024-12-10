@@ -1,0 +1,50 @@
+name: BXARM on Linux
+
+on:
+  workflow_run:
+    workflows: ["Build STM32 Project"]
+    types:
+      - completed
+
+jobs:
+  Building_for_microcontroller:
+    name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }}"
+    runs-on: [ self-hosted, linux ]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: Combination-of-toolchains
+
+      - name: Set up BXARM Toolchain and Compile STM32 Project
+        run: |
+            cd mcu_test_proj
+            rm -rf build
+            cmake . --preset=bxarm-debug
+            cmake --build --preset=bxarm-debug
+
+      - name: Upload Build Artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: mcu_test_proj/build/bxarm-debug/*.elf
+
+  deploy:
+    name: Deploy firmware
+    runs-on: [ self-hosted, linux ]
+    needs: Building_for_microcontroller
+
+    steps:
+      - name: Download ELF
+        uses: actions/download-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: ./
+
+      - name: Flash to MCU and test
+        run: |
+          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
