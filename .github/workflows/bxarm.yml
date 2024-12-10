@@ -1,10 +1,6 @@
 name: BXARM on Linux
 
-on:
-  workflow_run:
-    workflows: ["HHLA Sky Safety Controller CI/CD"]
-    types:
-      - completed
+on: push
 
 jobs:
   Building_for_microcontroller:
