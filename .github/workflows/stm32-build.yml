@@ -1,30 +1,24 @@
 name: Build STM32 Project
 
-on: 
-  push: 
-    branches : main
-  # workflow_run:
-  #   workflows: ["HHLA Sky Safety Controller CI/CD"]
-  #   types:
-  #     - completed
+on:
+  workflow_run:
+    workflows: ["HHLA Sky Safety Controller CI/CD"]
+    types:
+      - completed
 
 jobs:
   Building_for_microcontroller:
-    name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }} "
+    name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }}"
     runs-on: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    # container:
-    #   image: ghcr.io/${{github.repository}}/build-environment
-    #   credentials:
-    #     username: ${{github.actor}}
-    #     password: ${{secrets.GITHUB_TOKEN}}
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: Combination-of-toolchains
+          # Use head_branch to get the branch of the triggering workflow
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
         run: |
@@ -39,7 +33,7 @@ jobs:
         run: |
           cd build/gcc-debug
           ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
-      
+
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v3
@@ -54,6 +48,3 @@ jobs:
           title: "Building for microcontroller failed"
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
-      
-      
-      
