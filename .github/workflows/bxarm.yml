@@ -1,6 +1,10 @@
 name: BXARM on Linux
 
-on: push
+on:
+  workflow_run:
+    workflows: ["Build STM32 Project"]
+    types:
+      - completed
 
 jobs:
   Building_for_microcontroller:
