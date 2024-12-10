@@ -17,8 +17,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          # Use head_branch to get the branch of the triggering workflow
+          # Fetch the correct branch
           ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0 # Ensures full history is available
+
+      - name: Verify Active Branch
+        run: |
+          echo "Checked out branch:"
+          git branch --show-current
+          echo "Remote branches:"
+          git branch -r
 
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
         run: |
