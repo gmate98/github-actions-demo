@@ -46,8 +46,8 @@ jobs:
       - name: Download ELF
         uses: actions/download-artifact@v4
         with:
-          name: mcu_test_proj.elf
-          path: ./mcu_test_proj/build/bxarm-debug/mcu_test_proj.elf
+          name: STM32-Microcontroller_Binary
+          path: ./
 
       - name: Flash to MCU and test
         run: |
