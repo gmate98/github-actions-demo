@@ -2,17 +2,20 @@ name: BXARM on Linux
 
 on:
   workflow_run:
-    workflows: ["Build STM32 Project"]
+    workflows: ["Build STM32 Project"] # Ensure exact name match
     types:
       - completed
 
 jobs:
   Building_for_microcontroller:
-    name: "Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }}"
-    runs-on: [ self-hosted, linux ]
+    name: "BXARM Build - Commit: ${{ github.event.workflow_run.head_commit.message }}"
+    runs-on: [self-hosted, linux]
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
+      - name: Debug workflow_run event
+        run: echo "${{ toJSON(github.event) }}"
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -21,10 +24,10 @@ jobs:
 
       - name: Set up BXARM Toolchain and Compile STM32 Project
         run: |
-            cd mcu_test_proj
-            rm -rf build
-            cmake . --preset=bxarm-debug
-            cmake --build --preset=bxarm-debug
+          cd mcu_test_proj
+          rm -rf build
+          cmake . --preset=bxarm-debug
+          cmake --build --preset=bxarm-debug
 
       - name: Upload Build Artifacts
         if: success()
@@ -32,6 +35,7 @@ jobs:
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/bxarm-debug/*.elf
+
 
   deploy:
     name: Deploy firmware
