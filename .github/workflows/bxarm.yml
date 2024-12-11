@@ -10,7 +10,7 @@ jobs:
   Building_for_microcontroller:
     name: "BXARM Build - Commit: ${{ github.event.workflow_run.head_commit.message }}"
     runs-on: [self-hosted, linux]
-    if: ${{ (github.event.workflow_run.conclusion == 'success') && (!contains(github.event.workflow_run.head_commit.message, 'build gcc-arm')) }}
+    if: ${{ (github.event.workflow_run.conclusion == 'success') && (!contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
 
     steps:
       - name: Debug workflow_run event
