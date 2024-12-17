@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 
 # Project setup
-set(CMAKE_PROJECT_NAME mcu_test_proj)
-project(${CMAKE_PROJECT_NAME})
+project(mcu_test_proj)
+
+# Core project settings
+enable_language(CXX C ASM)
 
 # Define the build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -12,20 +14,13 @@ endif()
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
 
-# Core project settings
-enable_language(C ASM)
-enable_language(CXX)
-
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
 
-
 # Add the modified list of sources to the executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    ${STM32CUBE_SOURCES}  # Include all source files
+    # Add user sources here
 )
-
-# Remove sysmem.c and syscalls.c if the toolchain is bxarm
 
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
@@ -41,14 +36,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user-defined symbols here
 )
-
-# Conditionally add linker options for bxarm-debug
-if(CMAKE_TOOLCHAIN_FILE MATCHES "bxarm")
-    message("Belement bxarm")
-    target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
-        --config ${PROJECT_SOURCE_DIR}/bxarm_startup/stm32l152xe_flash.icf
-        --semihosting)
-endif()
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}

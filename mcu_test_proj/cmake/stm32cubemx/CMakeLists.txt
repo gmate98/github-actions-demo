@@ -21,8 +21,6 @@ target_include_directories(stm32cubemx INTERFACE
 )
 
 if(CMAKE_TOOLCHAIN_FILE MATCHES "bxarm")
-    message("bxarm LESGO")
-    # Include sysmem.c and syscalls.c for gcc toolchain
     target_sources(stm32cubemx INTERFACE
         ../../Core/Src/main.c
         ../../Core/Src/hal.c
@@ -44,10 +42,10 @@ if(CMAKE_TOOLCHAIN_FILE MATCHES "bxarm")
         ../../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_cortex.c
         ../../Drivers/STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_exti.c
         ../../Core/Src/system_stm32l1xx.c
-        ../../bxarm_startup/startup_stm32l152xe.s
+        ../../cmake/bxarm/startup_stm32l152xe.s
     )
-else()
-    message("gcc LESGO")
+elseif(CMAKE_TOOLCHAIN_FILE MATCHES "gcc-arm-none-eabi")
+# Include sysmem.c and syscalls.c for gcc toolchain
     target_sources(stm32cubemx INTERFACE
         ../../Core/Src/main.c
         ../../Core/Src/hal.c
@@ -71,8 +69,8 @@ else()
         ../../Core/Src/system_stm32l1xx.c
         ../../Core/Src/sysmem.c
         ../../Core/Src/syscalls.c
-        ../../startup_stm32l152xe.s
-    )
+        ../../cmake/gcc-arm-none-eabi/startup_stm32l152xe.s
+        )
 endif()
 
 target_link_directories(stm32cubemx INTERFACE

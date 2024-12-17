@@ -12,10 +12,7 @@
             "binaryDir": "${sourceDir}/build/gcc-debug",
             "toolchainFile": "cmake/gcc-arm-none-eabi.cmake",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-gcc",
-                "CMAKE_CXX_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-g++",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_TOOLCHAIN_FILE": "cmake/gcc-arm-none-eabi.cmake"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
@@ -25,10 +22,7 @@
             "binaryDir": "${sourceDir}/build/gcc-release",
             "toolchainFile": "cmake/gcc-arm-none-eabi.cmake",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-gcc",
-                "CMAKE_CXX_COMPILER": "/home/githubrunner/windows_combined/mcu_test_proj/tools/gcc/bin/arm-none-eabi-g++",
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "cmake/gcc-arm-none-eabi.cmake"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         },
         {
@@ -38,10 +32,7 @@
             "binaryDir": "${sourceDir}/build/bxarm-debug",
             "toolchainFile": "cmake/bxarm.cmake",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
-                "CMAKE_CXX_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_TOOLCHAIN_FILE": "cmake/bxarm.cmake"
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
@@ -51,10 +42,7 @@
             "binaryDir": "${sourceDir}/build/bxarm-release",
             "toolchainFile": "cmake/bxarm.cmake",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
-                "CMAKE_CXX_COMPILER": "/opt/iarsystems/bxarm/arm/bin/iccarm",
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_TOOLCHAIN_FILE": "cmake/bxarm.cmake"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         }
     ],

@@ -1,6 +1,7 @@
-# Toolchain File for the IAR C/C++ Compiler
+# Toolchain File for the IAR C/C++ toolchain
 
-set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_NAME               Generic)
+set(CMAKE_SYSTEM_PROCESSOR          arm)
 
 # Define compilers
 set(CMAKE_ASM_COMPILER /opt/iarsystems/bxarm/arm/bin/iasmarm)
@@ -10,13 +11,13 @@ set(CMAKE_CXX_COMPILER /opt/iarsystems/bxarm/arm/bin/iccarm)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # Specify general C flags
+message("${CMAKE_C_FLAGS}")
 set(CMAKE_C_FLAGS "-e --dlib_config full --cpu=cortex-m3")
 #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS} --debug")
 #set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS}")
 
-# Avoid explicitly setting C11 if not supported
-
 # Linker flags
+set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} --config \"${PROJECT_SOURCE_DIR}/cmake/bxarm/stm32l152xe_flash.icf\" --semihosting")
 
 # Ninja generator compatibility
 if(CMAKE_GENERATOR MATCHES "^Ninja.*$")
