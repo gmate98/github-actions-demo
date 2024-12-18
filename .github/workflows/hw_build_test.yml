@@ -20,8 +20,7 @@ jobs:
     name: "ARM-NONE-EABI-GCC build"
     runs-on: [ self-hosted, linux ]
     needs: Build_and_test_target_HW
-    if: ${{ ((github.event.workflow_run.conclusion == 'success'))  && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }} 
-    # || (contains(github.event.workflow_run.head_commit.message, '#skip_main'))
+    if: ${{ ((github.event.workflow_run.conclusion == 'success') || (contains(github.event.workflow_run.head_commit.message, '#skip_main'))) && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }} 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
