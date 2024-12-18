@@ -87,15 +87,11 @@ jobs:
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
 
-  Deploy_firmware1:
+  BXARM:
     uses: ./.github/workflows/deploy_and_test.yml
-    with:
-      build_type: 'BXARM'
     needs: BXARM_build
 
-  Deploy_firmware2:
+  ARM-NONE-EABI-GCC:
     uses: ./.github/workflows/deploy_and_test.yml
-    with:
-      build_type: 'ARM-NONE-EABI-GCC'
     needs: ARM-NONE-EABI-GCC_build
 

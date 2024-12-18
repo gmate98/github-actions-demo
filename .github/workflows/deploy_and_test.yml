@@ -2,14 +2,9 @@ name: Reusable deploy and test
 
 on:
   workflow_call:
-    inputs:
-        build_type:
-            required: true
-            type: string
 
 jobs:
   Diploy_firmware:
-    name: ${{inputs.build_type}}
     runs-on: [self-hosted, linux]
     steps:
       - name: Download ELF
