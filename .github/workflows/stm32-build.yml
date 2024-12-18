@@ -1,10 +1,8 @@
 name: HHLA Sky SC - ARM-NONE-EABI-GCC build and test
 
 on: 
-  push:
-    branches: main
-  # workflow_run:
-  #   workflows: ["HHLA Sky SC - CI/CD Main"]
+  workflow_run:
+    workflows: ["HHLA Sky SC - CI/CD Main"]
   #   types:
   #     - completed
 
@@ -16,12 +14,14 @@ jobs:
 
     steps:
       - name: Checkout Repository
+        if: (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm'))
         uses: actions/checkout@v4
         with:
           submodules: recursive
           ref: main
 
       - name: Verify Active Branch
+        if: (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm'))
         run: |
           echo "Checked out branch:"
           git branch --show-current
@@ -29,6 +29,7 @@ jobs:
           git branch -r
 
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
+        if: (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm'))
         run: |
           cd mcu_test_proj
           PATH=$(pwd)/tools/gcc/bin:$PATH
@@ -38,19 +39,24 @@ jobs:
           cmake --build --preset=gcc-debug
 
       - name: Flash to MCU and test
+        if: (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm'))
         run: |
           cd mcu_test_proj/build/gcc-debug
           ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
 
       - name: Upload Build Artifacts
-        if: success()
+        if: |
+          (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) &&
+          success()
         uses: actions/upload-artifact@v3
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/Debug/*.elf
 
       - name: Create issue on failure
-        if: failure()
+        if: |
+          (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) &&
+          failure()
         uses: peter-evans/create-issue-from-file@v5
         with:
           title: "Building for microcontroller failed"
