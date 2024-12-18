@@ -39,7 +39,7 @@ jobs:
 
       - name: Upload Build Artifacts
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/gcc-debug/*.elf
