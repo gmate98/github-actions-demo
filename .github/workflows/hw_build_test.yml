@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: STM32-Microcontroller_Binary
-          path: mcu_test_proj/build/gcc-debug*.elf
+          path: mcu_test_proj/build/gcc-debug/*.elf
 
       - name: Create issue on failure
         if: failure()
