@@ -10,12 +10,12 @@ on:
   #     - completed
 
   # github.event.workflow_run.conclusion == 'success' &&
-env:
-    MSG: ${{ github.event.workflow_run.head_commit.message != '' && github.event.workflow_run.head_commit.message || '' }}
+# env:
+#     MSG: ${{ github.event.workflow_run.head_commit.message != '' && github.event.workflow_run.head_commit.message || '' }}
 
 jobs:
   Building_for_microcontroller:
-    name: "Build STM32 Project - Commit: $MSG"
+    name: "Build STM32 Project ${{ github.event.workflow_run.head_commit.message != '' && '${{github.event.workflow_run.head_commit.message}} - Commit:'|| '' }}"
     runs-on: [ self-hosted, linux ]
     if: |
         contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')
