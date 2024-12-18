@@ -1,21 +1,18 @@
 name: HHLA Sky SC - ARM-NONE-EABI-GCC build and test
 
 on: 
-  push:
-    branches: main
-
-  # workflow_run:
-  #   workflows: ["HHLA Sky SC - CI/CD Main"]
+  workflow_run:
+    workflows: ["HHLA Sky SC - CI/CD Main"]
   #   types:
   #     - completed
 
   # github.event.workflow_run.conclusion == 'success' &&
-# env:
-#     MSG: ${{ github.event.head_commit.message != '' && github.event.head_commit.message || '' }}
+env:
+  MSG: ${{ github.event.workflow_run.head_commit.message != '' && github.event.workflow_run.head_commit.message || '' }}
 
 jobs:
   Building_for_microcontroller:
-    name: "Build STM32 Project ${{github.event.head_commit.message}}" # != '' && '$github.event.head_commit.message - Commit:' || '' }}"
+    name: "Build STM32 Project ${{inputs.MSG}}" # != '' && '$github.event.head_commit.message - Commit:' || '' }}"
     runs-on: [ self-hosted, linux ]
     if: |
         contains(github.event.head_commit.message, '#build-gcc-arm')
