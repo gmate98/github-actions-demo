@@ -1,4 +1,4 @@
-name: HHLA Sky SC - ARM-NONE-EABI-GCC build and test
+name: HHLA Sky SC - Target HW Build and Test
 
 on: 
   workflow_run:
@@ -48,7 +48,7 @@ jobs:
         if: failure()
         uses: peter-evans/create-issue-from-file@v5
         with:
-          title: "Building for microcontroller failed"
+          title: "Building for target HW failed"
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
 
@@ -78,12 +78,20 @@ jobs:
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/bxarm-debug/*.elf
+      
+      - name: Create issue on failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Building for target HW failed"
+          content-filepath: ./build-failure.txt
+          labels: bug, build-failure
 
   Deploy_firmware:
     name: Deploy firmware
     runs-on: [ self-hosted, linux ]
-    needs: [BXARM_build, ARM-NONE-EABI-GCC_build] 
-    if: contains(needs.*.result, 'success')
+    needs: [BXARM_build] 
+    if:  always() && contains(needs.*.result, 'success')
 
     steps:
       - name: Download ELF
