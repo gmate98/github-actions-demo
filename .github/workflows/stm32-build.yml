@@ -9,7 +9,7 @@ on:
   # github.event.workflow_run.conclusion == 'success' &
 jobs:
   Building_for_microcontroller:
-    name: "ARM-NONE-EABI-GCC build and test - Commit: ${{github.event.workflow_run.head_commit.message != null}}"
+    name: "ARM-NONE-EABI-GCC build and test - Commit: ${{github.event.workflow_run.head_commit.message}}"
     runs-on: [ self-hosted, linux ]
     if: |
         contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')
