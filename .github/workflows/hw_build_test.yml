@@ -10,6 +10,11 @@ jobs:
   Build_and_test_target_HW:
     name: "Build and test for/on HW - Commit: ${{github.event.workflow_run.head_commit.message}}"
     runs-on: [ self-hosted, linux ]
+
+    steps:
+      - name: Setup
+        run: |
+          echo "Starting build for target HW!"
   
   ARM-NONE-EABI-GCC_build:
     name: "ARM-NONE-EABI-GCC build"
