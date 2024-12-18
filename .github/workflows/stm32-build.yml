@@ -6,25 +6,10 @@ on:
   #   types:
   #     - completed
 
-  # github.event.workflow_run.conclusion == 'success' &&
+  # github.event.workflow_run.conclusion == 'success' &
 jobs:
-  set-name:
-    runs-on: [ self-hosted, linux ]
-    outputs:
-      job_name: ${{ steps.set-output.outputs.job_name }}
-    steps:
-      - name: Set job name
-        id: set-output
-        run: |
-          if [[ "${{ github.event.workflow_run.head_commit.message }}" != "" ]]; then
-            echo "::set-output name=job_name::Build STM32 Project - Commit: ${{ github.event.workflow_run.head_commit.message }}"
-          else
-            echo "::set-output name=job_name::Build STM32 Project"
-          fi
-          
   Building_for_microcontroller:
-    needs: set-name
-    name: ${{ needs.set-name.outputs.job_name }}
+    name: "ARM-NONE-EABI-GCC build and test - Commit: ${{github.event.workflow_run.head_commit.message != null}}"
     runs-on: [ self-hosted, linux ]
     if: |
         contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')
