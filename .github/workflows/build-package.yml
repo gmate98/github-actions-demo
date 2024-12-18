@@ -1,4 +1,4 @@
-name: HHLA Sky Safety Controller CI/CD
+name: HHLA Sky SC - CI/CD Main
 
 on: 
   push:

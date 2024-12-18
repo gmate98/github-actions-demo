@@ -1,8 +1,8 @@
-name: BXARM on Linux
+name: HHLA Sky SC - BXARM build and test
 
 on:
   workflow_run:
-    workflows: ["HHLA Sky Safety Controller CI/CD"]
+    workflows: ["HHLA Sky SC - CI/CD Main"]
     types:
       - completed
 
