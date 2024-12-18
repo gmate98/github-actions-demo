@@ -9,7 +9,7 @@ on:
   # github.event.workflow_run.conclusion == 'success' &
 jobs:
   ARM-NONE-EABI-GCC_build_and_test:
-    # name: "ARM-NONE-EABI-GCC build and test - Commit: ${{github.event.head_commit.message}}"
+    name: "ARM-NONE-EABI-GCC build and test - Commit: ${{github.event.workflow_run.head_commit.message}}"
     runs-on: [ self-hosted, linux ]
 
     steps:
