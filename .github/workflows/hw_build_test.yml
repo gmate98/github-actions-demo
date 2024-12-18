@@ -20,7 +20,8 @@ jobs:
     name: "ARM-NONE-EABI-GCC build"
     runs-on: [ self-hosted, linux ]
     needs: Build_and_test_target_HW
-    if: ${{ ((github.event.workflow_run.conclusion == 'success') || (contains(github.event.workflow_run.head_commit.message, '#skip_main')))  && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
+    if: ${{ ((github.event.workflow_run.conclusion == 'success'))  && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }} 
+    # || (contains(github.event.workflow_run.head_commit.message, '#skip_main'))
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -42,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: STM32-Microcontroller_Binary
-          path: mcu_test_proj/Debug/*.elf
+          path: mcu_test_proj/build/gcc-debug*.elf
 
       - name: Create issue on failure
         if: failure()
