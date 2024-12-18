@@ -1,0 +1,93 @@
+name: HHLA Sky SC - ARM-NONE-EABI-GCC build and test
+
+on: 
+  workflow_run:
+    workflows: ["HHLA Sky SC - CI/CD Main"]
+    types:
+      - completed
+
+jobs:
+  Build_and_test_target_HW:
+    name: "Build and test for/on HW - Commit: ${{github.event.workflow_run.head_commit.message}}"
+    runs-on: [ self-hosted, linux ]
+  
+  ARM-NONE-EABI-GCC_build:
+    name: "ARM-NONE-EABI-GCC build"
+    runs-on: [ self-hosted, linux ]
+    needs: Build_and_test_target_HW
+    if: ${{ (github.event.workflow_run.conclusion == 'success') && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: main
+
+      - name: Set up ARM GCC Toolchain and Compile STM32 Project
+        run: |
+          cd mcu_test_proj
+          PATH=$(pwd)/tools/gcc/bin:$PATH
+          LD_LIBRARY_PATH=$(pwd)/tools/gcc/lib:$LD_LIBRARY_PATH
+          rm -rf build
+          cmake . --preset=gcc-debug
+          cmake --build --preset=gcc-debug
+
+      - name: Upload Build Artifacts
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: STM32-Microcontroller_Binary
+          path: mcu_test_proj/Debug/*.elf
+
+      - name: Create issue on failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Building for microcontroller failed"
+          content-filepath: ./build-failure.txt
+          labels: bug, build-failure
+
+  BXARM_build:
+    name: "BXARM build"
+    runs-on: [self-hosted, linux]
+    needs: Build_and_test_target_HW
+    if: ${{ (github.event.workflow_run.conclusion == 'success') && (!contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: main
+
+      - name: Set up BXARM Toolchain and Compile STM32 Project
+        run: |
+          cd mcu_test_proj
+          rm -rf build
+          cmake . --preset=bxarm-debug
+          cmake --build --preset=bxarm-debug
+
+      - name: Upload Build Artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: mcu_test_proj/build/bxarm-debug/*.elf
+
+  Deploy_firmware:
+    name: Deploy firmware
+    runs-on: [ self-hosted, linux ]
+    needs: [BXARM_build, ARM-NONE-EABI-GCC_build] 
+    if: contains(needs.*.result, 'success')
+
+    steps:
+      - name: Download ELF
+        uses: actions/download-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: ./
+
+      - name: Flash to MCU and test
+        run: |
+          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
+
