@@ -43,9 +43,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     # Add user-defined libraries here
 )
 
-# Enable compile command to ease indexing with e.g. clangd
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-
 # Validate that STM32CubeMX code is compatible with C standard
 if(CMAKE_C_STANDARD LESS 11)
     message(ERROR "Generated code requires C11 or higher")
