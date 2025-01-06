@@ -4,12 +4,6 @@ name: 'artifacts cleanup'
 #     - cron: '0 1 * * *' # every night at 1 am UTC
 on: 
     workflow_dispatch:
-        # inputs:
-        #     environment: 
-        #         description: 'Deployment Environment' 
-        #         required: true 
-        #         default: 'staging' 
-        #         type: string
 
 jobs:
   delete-artifacts:
