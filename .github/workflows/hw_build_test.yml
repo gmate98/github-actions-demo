@@ -31,8 +31,8 @@ jobs:
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
         run: |
           cd mcu_test_proj
-          PATH=$(pwd)/tools/gcc/bin:$PATH
-          LD_LIBRARY_PATH=$(pwd)/tools/gcc/lib:$LD_LIBRARY_PATH
+        # PATH=$(pwd)/tools/gcc/bin:$PATH
+        # LD_LIBRARY_PATH=$(pwd)/tools/gcc/lib:$LD_LIBRARY_PATH
           rm -rf build
           cmake . --preset=gcc-debug
           cmake --build --preset=gcc-debug

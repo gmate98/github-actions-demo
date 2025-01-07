@@ -50,7 +50,8 @@
         {
             "name": "gcc-debug",
             "description": "Build the project using the gcc-arm-none-eabi toolchain in Debug mode",
-            "configurePreset": "gcc-debug"
+            "configurePreset": "gcc-debug",
+            "verbose": true
         },
         {
             "name": "gcc-release",
