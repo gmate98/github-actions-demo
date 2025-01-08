@@ -1,7 +1,7 @@
 name: HHLA Sky SC - CI/CD Main
 
 on: 
-  push:
+  pull_request:
     branches: main
 
 jobs:
