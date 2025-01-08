@@ -1,15 +1,43 @@
-name: 'artifacts cleanup'
-# on:
-#   schedule:
-#     - cron: '0 1 * * *' # every night at 1 am UTC
-on: 
-    workflow_dispatch:
+name: 'Artifacts Cleanup'
+
+on:
+  workflow_dispatch:
 
 jobs:
   delete-artifacts:
     runs-on: ubuntu-latest
+    env:
+      GH_OWNER: ${{ github.repository_owner }}
+      GH_REPO: ${{ github.event.repository.name }}
+
     steps:
-      - uses: kolpav/purge-artifacts-action@v1
-        with:
-          token: ${{ secrets.FOR_WEBHOOKS_SECRET }}
-          expire-in: 7days # Set this to 0 to delete all artifacts
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+
+      - name: Authenticate GitHub CLI
+        run: |
+          echo "${{ secrets.FOR_WEBHOOKS_SECRET }}" | gh auth login --with-token
+
+      - name: List all artifacts
+        run: |
+          gh api repos/$GH_OWNER/$GH_REPO/actions/artifacts --paginate -q '.artifacts[] | {id: .id, name: .name, expired: .expired}' > artifacts.json
+
+      - name: List all tags
+        run: |
+          gh api repos/$GH_OWNER/$GH_REPO/git/refs/tags -q '.[] | .ref' > tags.json
+
+      - name: Delete untagged artifacts
+        run: |
+          jq -c '.[]' artifacts.json | while read artifact; do
+            artifact_id=$(echo $artifact | jq -r '.id')
+            artifact_name=$(echo $artifact | jq -r '.name')
+            
+            if grep -q $artifact_name tags.json; then
+              echo "Skipping tagged artifact: $artifact_name"
+            else
+              echo "Deleting untagged artifact: $artifact_name"
+              gh api repos/$GH_OWNER/$GH_REPO/actions/artifacts/$artifact_id -X DELETE
+            fi
+          done
