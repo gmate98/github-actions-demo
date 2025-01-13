@@ -5,24 +5,24 @@ on:
     branches: main
 
 jobs:
-  check_skip_flags:
-    name: Check skip flags
-    runs-on: ubuntu-latest
-    outputs:
-      head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
-    steps:
-      - name: Get repo
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: Print head git commit message
-        id: get_head_commit_message
-        run: echo "::set-output name=headCommitMsg::$(git show -s --format=%s)"
+  # check_skip_flags:
+  #   name: Check skip flags
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     head-commit-message: ${{ steps.get_head_commit_message.outputs.headCommitMsg }}
+  #   steps:
+  #     - name: Get repo
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #     - name: Print head git commit message
+  #       id: get_head_commit_message
+  #       run: echo "::set-output name=headCommitMsg::$(git show -s --format=%s)"
   build:
-    name: "Build - Commit: ${{ github.event.workflow_run.head_commit.message }}"
+    name: "Build - PR: ${{ github.event.pull_request.title }}"
     runs-on: ubuntu-22.04
-    needs: check_skip_flags
-    if: ${{ !contains(needs.check_skip_flags.outputs.head-commit-message, '#skip-main'))}}
+    # needs: check_skip_flags
+    if: ${{ !contains(github.event.pull_request.title, '#skip-main')}}
 
     steps:
       - name: Checkout Repository
