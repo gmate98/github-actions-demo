@@ -6,10 +6,9 @@ on:
 
 jobs:
   build:
-    name: "Build - Commit: ${{ github.event.head_commit.message }}"
+    name: "Build - PR: ${{github.event.pull_request.title}}"
     runs-on: ubuntu-22.04
-    if: ${{(!contains(github.event.head_commit.message, '#skip-main'))}}
-
+    if: ${{ !contains(github.event.pull_request.title, '#skip-main')}}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
