@@ -4,9 +4,9 @@ set(CMAKE_SYSTEM_NAME               Generic)
 set(CMAKE_SYSTEM_PROCESSOR          arm)
 
 # Define compilers
-set(CMAKE_ASM_COMPILER /opt/iarsystems/bxarm/arm/bin/iasmarm)
-set(CMAKE_C_COMPILER   /opt/iarsystems/bxarm/arm/bin/iccarm)
-set(CMAKE_CXX_COMPILER /opt/iarsystems/bxarm/arm/bin/iccarm)
+set(CMAKE_ASM_COMPILER /opt/iarsystems/bxarmfs/arm/bin/iasmarm)
+set(CMAKE_C_COMPILER   /opt/iarsystems/bxarmfs/arm/bin/iccarm)
+set(CMAKE_CXX_COMPILER /opt/iarsystems/bxarmfs/arm/bin/iccarm)
 
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
