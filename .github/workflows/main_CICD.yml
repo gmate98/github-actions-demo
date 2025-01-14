@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: "Build - PR: ${{github.event.pull_request.title}}"
+    name: "Build Main CI/CD"
     runs-on: ubuntu-22.04
     if: ${{ !contains(github.event.pull_request.title, '#skip-main')}}
     steps:
@@ -56,7 +56,7 @@ jobs:
           labels: bug, build-failure
 
   test:
-    name: "Test Project"
+    name: "Test Main CI/CD"
     runs-on: ubuntu-22.04
     needs: build  # Ensures test job runs after build job
 
