@@ -9,17 +9,17 @@ on:
 jobs:
   Build_and_test_target_HW:
     name: "Build and test for/on HW"
-    runs-on: [ self-hosted, linux ]
+    runs-on: [self-hosted, linux]
     steps:
       - name: Setup
         run: |
           echo "Starting build for target HW!"
-  
+
   ARM-NONE-EABI-GCC_build:
     name: "ARM-NONE-EABI-GCC build"
-    runs-on: [ self-hosted, linux ]
+    runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
-    if: ${{ ((github.event.workflow_run.conclusion == 'success') || (github.event.workflow_run.conclusion == 'skipped')) && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }} 
+    if: ${{ ((github.event.workflow_run.conclusion == 'success') || (github.event.workflow_run.conclusion == 'skipped')) && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -54,7 +54,6 @@ jobs:
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
     if: ${{ ((github.event.workflow_run.conclusion == 'success') || (github.event.workflow_run.conclusion == 'skipped')) && (!contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -75,7 +74,7 @@ jobs:
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/bxarm-debug/*.elf
-      
+
       - name: Create issue on failure
         if: failure()
         uses: peter-evans/create-issue-from-file@v5
@@ -91,4 +90,3 @@ jobs:
   ARM-NONE-EABI-GCC:
     uses: ./.github/workflows/deploy_and_test.yml
     needs: ARM-NONE-EABI-GCC_build
-
