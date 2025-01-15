@@ -1,9 +1,6 @@
 name: HHLA Sky SC - Target HW Build and Test
 
 on: 
-  pull_request:
-    branches:
-      - main
   workflow_run:
     workflows: ["HHLA Sky SC - CI/CD Main"]
     types:
@@ -22,13 +19,13 @@ jobs:
     name: "ARM-NONE-EABI-GCC build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
-    if: ${{ ((github.event_name == 'workflow_run' && (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped')) || github.event_name == 'pull_request') && contains(github.head_commit.message, '#build-gcc-arm') }}
+    if: ${{ ((github.event.workflow_run.conclusion == 'success') || (github.event.workflow_run.conclusion == 'skipped')) && (contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: ${{ github.ref }}
+          ref: main
 
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
         run: |
@@ -44,17 +41,25 @@ jobs:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/gcc-debug/*.elf
 
+      - name: Create issue on failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Building for target HW failed"
+          content-filepath: ./build-failure.txt
+          labels: bug, build-failure
+
   BXARM_build:
     name: "BXARM build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
-    if: ${{ ((github.event_name == 'workflow_run' && (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped')) || github.event_name == 'pull_request') && !contains(github.head_commit.message, '#build-gcc-arm') }}
+    if: ${{ ((github.event.workflow_run.conclusion == 'success') || (github.event.workflow_run.conclusion == 'skipped')) && (!contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm')) }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: ${{ github.ref }}
+          ref: main
 
       - name: Set up BXARM Toolchain and Compile STM32 Project
         run: |
@@ -69,3 +74,18 @@ jobs:
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/bxarm-debug/*.elf
+      - name: Create issue on failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Building for target HW failed"
+          content-filepath: ./build-failure.txt
+          labels: bug, build-failure
+
+  BXARM:
+    uses: ./.github/workflows/deploy_and_test.yml
+    needs: BXARM_build
+
+  ARM-NONE-EABI-GCC:
+    uses: ./.github/workflows/deploy_and_test.yml
+    needs: ARM-NONE-EABI-GCC_build
