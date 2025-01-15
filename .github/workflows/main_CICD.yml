@@ -12,13 +12,11 @@ jobs:
   build:
     name: "Build Main CI/CD"
     runs-on: ubuntu-22.04
-    if: ${{ !contains(github.event.pull_request.title, '#skip-main') }}
+    if: ${{ (!contains(github.event.head_commit.message, '#skip-all')) && (github.event_name == 'pull_request' || !contains(github.event.head_commit.message, '#skip-main')) }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          ref: ${{ github.ref }}
+      - name: Check for skip-all
+        if: ${{ contains(github.event.head_commit.message, '#skip-all') }}
+        run: echo "Skipping all workflows due to skip-all" && exit 0
 
       - name: Setup Ubuntu
         run: |
