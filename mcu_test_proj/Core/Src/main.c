@@ -99,7 +99,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
     toggleLED();
-    HAL_Delay(101);
+    HAL_Delay(500);
 
     /* USER CODE BEGIN 3 */
   }
