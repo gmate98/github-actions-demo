@@ -11,7 +11,7 @@ jobs:
   Build_and_test_target_HW:
     name: "Build and test for/on HW"
     runs-on: [self-hosted, linux]
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Setup
         run: |
@@ -21,7 +21,7 @@ jobs:
     name: "ARM-NONE-EABI-GCC build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
-    if: ${{ contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
+    # if: ${{ contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
     name: "BXARM build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
-    if: ${{ !contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
+    # if: ${{ !contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
