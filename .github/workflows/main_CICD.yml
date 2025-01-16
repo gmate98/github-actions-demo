@@ -4,18 +4,14 @@ on:
   pull_request:
     branches: 
       - main
-  push:
-    branches-ignore:
-      - main
-
+  workflow_dispatch:
+      
 jobs:
   build:
     name: "Build Main CI/CD"
     runs-on: ubuntu-22.04
-    if: ${{ (!contains(github.event.head_commit.message, '#skip-all')) && (github.event_name == 'pull_request' || !contains(github.event.head_commit.message, '#skip-main')) }}
     steps:
       - name: Check for skip-all
-        if: ${{ contains(github.event.head_commit.message, '#skip-all') }}
         run: echo "Skipping all workflows due to skip-all" && exit 0
 
       - name: Setup Ubuntu
