@@ -1,10 +1,10 @@
 name: HHLA Sky SC - Target HW Build and Test
 
 on: 
-  workflow_run:
-    workflows: ["HHLA Sky SC - CI/CD Main"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["HHLA Sky SC - CI/CD Main"]
+  #   types:
+  #     - completed
   workflow_dispatch:
 
 jobs:
@@ -21,6 +21,7 @@ jobs:
     name: "ARM-NONE-EABI-GCC build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
+    if: ${{ contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -54,6 +55,7 @@ jobs:
     name: "BXARM build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
+    if: ${{ !contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

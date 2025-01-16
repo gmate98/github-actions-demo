@@ -11,11 +11,6 @@ jobs:
     name: "Build Main CI/CD"
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
       - name: Setup Ubuntu
         run: |
           sudo apt update && sudo apt install -y \
@@ -26,6 +21,11 @@ jobs:
           g++-multilib \
           gcovr \
           git
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       # Configure the project using CMake
       - name: Configure with CMake
