@@ -91,11 +91,30 @@ jobs:
           title: "Building for target HW failed"
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
+  Deploy:
+    runs-on: [self-hosted, linux]
+    needs: [ BXARM_build, ARM-NONE-EABI-GCC_build]
+    if: |
+      always()
+      && contains(needs.*.result, 'success')
+      && !contains(needs.*.result, 'skipped')
+    steps:
+      - name: Download ELF
+        uses: actions/download-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: ./
+
+      - name: Flash to MCU and test
+        run: |
+          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
+
+
+
+  # BXARM:
+  #   uses: ./.github/workflows/deploy_and_test.yml
+  #   needs: BXARM_build
  
-  BXARM:
-    uses: ./.github/workflows/deploy_and_test.yml
-    needs: BXARM_build
- 
-  ARM-NONE-EABI-GCC:
-    uses: ./.github/workflows/deploy_and_test.yml
-    needs: ARM-NONE-EABI-GCC_build
+  # ARM-NONE-EABI-GCC:
+  #   uses: ./.github/workflows/deploy_and_test.yml
+  #   needs: ARM-NONE-EABI-GCC_build
