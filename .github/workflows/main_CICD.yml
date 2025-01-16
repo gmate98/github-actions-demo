@@ -11,8 +11,10 @@ jobs:
     name: "Build Main CI/CD"
     runs-on: ubuntu-22.04
     steps:
-      - name: Check for skip-all
-        run: echo "Skipping all workflows due to skip-all" && exit 0
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Setup Ubuntu
         run: |
@@ -59,10 +61,10 @@ jobs:
     needs: build  # Ensures test job runs after build job
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v4
+      #   with:
+      #     submodules: recursive
 
       # Download build artifact from build job
       - name: Download build artifact
