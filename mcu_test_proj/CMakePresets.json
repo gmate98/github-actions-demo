@@ -9,7 +9,7 @@
             "name": "stm32-gcc-toolchain-debug",
             "description": "Build using the gcc-arm-none-eabi toolchain in Debug mode",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/gcc-debug",
+            "binaryDir": "${sourceDir}/build/stm32-gcc-toolchain-debug",
             "toolchainFile": "cmake/gcc-arm-none-eabi.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
@@ -19,7 +19,7 @@
             "name": "stm32-gcc-toolchain-release",
             "description": "Build using the gcc-arm-none-eabi toolchain in Release mode",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/gcc-release",
+            "binaryDir": "${sourceDir}/build/stm32-gcc-toolchain-release",
             "toolchainFile": "cmake/gcc-arm-none-eabi.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
@@ -29,7 +29,7 @@
             "name": "bxarm-toolchain-debug",
             "description": "Build using the bxarm toolchain in Debug mode",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/bxarm-debug",
+            "binaryDir": "${sourceDir}/build/bxarm-toolchain-debug",
             "toolchainFile": "cmake/bxarm.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
@@ -39,7 +39,7 @@
             "name": "bxarm-toolchain-release",
             "description": "Build using the bxarm toolchain in Release mode",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/bxarm-release",
+            "binaryDir": "${sourceDir}/build/bxarm-toolchain-release",
             "toolchainFile": "cmake/bxarm.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
