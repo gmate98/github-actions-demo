@@ -1,48 +1,56 @@
 name: HHLA Sky SC - Target HW Build and Test
 
 on: 
-  # workflow_run:
-  #   workflows: ["HHLA Sky SC - CI/CD Main"]
-  #   types:
-  #     - completed
+  workflow_run:
+    workflows: ["HHLA Sky SC - CI/CD Main"]
+    types:
+      - completed
+
   workflow_dispatch:
+    inputs:
+        choice:
+          type: choice
+          description: Select toolchain
+          options:
+          - stm32-gcc-toolchain
+          - bxarm-toolchain
 
 jobs:
   Build_and_test_target_HW:
     name: "Build and test for/on HW"
     runs-on: [self-hosted, linux]
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ (github.event.workflow_run.conclusion == 'success') || (github.event_name == 'workflow_dispatch')}}
     steps:
       - name: Setup
         run: |
           echo "Starting build for target HW!"
-
+ 
   ARM-NONE-EABI-GCC_build:
     name: "ARM-NONE-EABI-GCC build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
-    # if: ${{ contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
+    if: ${{ (github.event_name == 'workflow_dispatch') && (inputs.toolchain == 'stm32-gcc-toolchain')}}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
           ref: main
-
+ 
       - name: Set up ARM GCC Toolchain and Compile STM32 Project
         run: |
           cd mcu_test_proj
           rm -rf build
           cmake . --preset=gcc-debug
           cmake --build --preset=gcc-debug
-
+ 
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/gcc-debug/*.elf
-
+ 
       - name: Create issue on failure
         if: failure()
         uses: peter-evans/create-issue-from-file@v5
@@ -50,26 +58,26 @@ jobs:
           title: "Building for target HW failed"
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
-
+ 
   BXARM_build:
     name: "BXARM build"
     runs-on: [self-hosted, linux]
     needs: Build_and_test_target_HW
-    # if: ${{ !contains(github.event.workflow_run.head_commit.message, '#build-gcc-arm') }}
+    if: ${{ (github.event_name == 'workflow_run')  || ((github.event_name == 'workflow_dispatch') && (inputs.toolchain == 'bxarm-toolchain')) }} 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
           ref: main
-
+ 
       - name: Set up BXARM Toolchain and Compile STM32 Project
         run: |
           cd mcu_test_proj
           rm -rf build
           cmake . --preset=bxarm-debug
           cmake --build --preset=bxarm-debug
-
+ 
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v4
@@ -83,11 +91,11 @@ jobs:
           title: "Building for target HW failed"
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
-
+ 
   BXARM:
     uses: ./.github/workflows/deploy_and_test.yml
     needs: BXARM_build
-
+ 
   ARM-NONE-EABI-GCC:
     uses: ./.github/workflows/deploy_and_test.yml
     needs: ARM-NONE-EABI-GCC_build
