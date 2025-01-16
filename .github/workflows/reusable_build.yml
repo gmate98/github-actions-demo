@@ -1,0 +1,42 @@
+name: Reusable deploy and test
+
+on:
+  workflow_call:
+    inputs:
+      toolchain:
+        required: true
+        type: string
+      configuration:
+        required: true
+        type: string
+
+jobs:
+  Build:
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          ref: main
+ 
+      - name: Set up Toolchain and Compile STM32 Project
+        run: |
+          cd mcu_test_proj
+          rm -rf build
+          cmake . --preset=${{inputs.toolchain}}-${{inputs.configuration}}
+          cmake --build --preset=${{inputs.toolchain}}-${{inputs.configuration}}
+ 
+      - name: Upload Build Artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: mcu_test_proj/build/${{inputs.toolchain}}-${{inputs.configuration}}/*.elf
+      - name: Create issue on failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Building for target HW failed"
+          content-filepath: ./build-failure.txt
+          labels: bug, build-failure

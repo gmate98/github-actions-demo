@@ -6,7 +6,7 @@
     },
     "configurePresets": [
         {
-            "name": "gcc-debug",
+            "name": "stm32-gcc-toolchain-debug",
             "description": "Build using the gcc-arm-none-eabi toolchain in Debug mode",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/gcc-debug",
@@ -16,7 +16,7 @@
             }
         },
         {
-            "name": "gcc-release",
+            "name": "stm32-gcc-toolchain-release",
             "description": "Build using the gcc-arm-none-eabi toolchain in Release mode",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/gcc-release",
@@ -26,7 +26,7 @@
             }
         },
         {
-            "name": "bxarm-debug",
+            "name": "bxarm-toolchain-debug",
             "description": "Build using the bxarm toolchain in Debug mode",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/bxarm-debug",
@@ -36,7 +36,7 @@
             }
         },
         {
-            "name": "bxarm-release",
+            "name": "bxarm-toolchain-release",
             "description": "Build using the bxarm toolchain in Release mode",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/bxarm-release",
@@ -48,25 +48,25 @@
     ],
     "buildPresets": [
         {
-            "name": "gcc-debug",
+            "name": "stm32-gcc-toolchain-debug",
             "description": "Build the project using the gcc-arm-none-eabi toolchain in Debug mode",
-            "configurePreset": "gcc-debug",
+            "configurePreset": "stm32-gcc-toolchain-debug",
             "verbose": true
         },
         {
-            "name": "gcc-release",
+            "name": "stm32-gcc-toolchain-release",
             "description": "Build the project using the gcc-arm-none-eabi toolchain in Release mode",
-            "configurePreset": "gcc-release"
+            "configurePreset": "stm32-gcc-toolchain-release"
         },
         {
-            "name": "bxarm-debug",
+            "name": "bxarm-toolchain-debug",
             "description": "Build the project using the bxarm toolchain in Debug mode",
-            "configurePreset": "bxarm-debug"
+            "configurePreset": "bxarm-toolchain-debug"
         },
         {
-            "name": "bxarm-release",
+            "name": "bxarm-toolchain-release",
             "description": "Build the project using the bxarm toolchain in Release mode",
-            "configurePreset": "bxarm-release"
+            "configurePreset": "bxarm-toolchain-release"
         }
     ]
 }

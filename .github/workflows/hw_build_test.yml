@@ -8,12 +8,19 @@ on:
 
   workflow_dispatch:
     inputs:
-        choice:
+        toolchain:
           type: choice
           description: Select toolchain
           options:
           - stm32-gcc-toolchain
           - bxarm-toolchain
+        configuration:
+          type: choice
+          description: Select toolchain
+          options:
+            - debug
+            - release
+          default: 'debug'
 
 jobs:
   Build_and_test_target_HW:
@@ -24,97 +31,16 @@ jobs:
       - name: Setup
         run: |
           echo "Starting build for target HW!"
- 
-  ARM-NONE-EABI-GCC_build:
-    name: "ARM-NONE-EABI-GCC build"
-    runs-on: [self-hosted, linux]
-    needs: Build_and_test_target_HW
-    if: ${{ (github.event_name == 'workflow_dispatch') && (inputs.choice == 'stm32-gcc-toolchain')}}
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          ref: main
- 
-      - name: Set up ARM GCC Toolchain and Compile STM32 Project
-        run: |
-          cd mcu_test_proj
-          rm -rf build
-          cmake . --preset=gcc-debug
-          cmake --build --preset=gcc-debug
- 
-      - name: Upload Build Artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: STM32-Microcontroller_Binary
-          path: mcu_test_proj/build/gcc-debug/*.elf
- 
-      - name: Create issue on failure
-        if: failure()
-        uses: peter-evans/create-issue-from-file@v5
-        with:
-          title: "Building for target HW failed"
-          content-filepath: ./build-failure.txt
-          labels: bug, build-failure
- 
-  BXARM_build:
-    name: "BXARM build"
-    runs-on: [self-hosted, linux]
-    needs: Build_and_test_target_HW
-    if: ${{ (github.event_name == 'workflow_run')  || ((github.event_name == 'workflow_dispatch') && (inputs.choice == 'bxarm-toolchain')) }} 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          ref: main
- 
-      - name: Set up BXARM Toolchain and Compile STM32 Project
-        run: |
-          cd mcu_test_proj
-          rm -rf build
-          cmake . --preset=bxarm-debug
-          cmake --build --preset=bxarm-debug
- 
-      - name: Upload Build Artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: STM32-Microcontroller_Binary
-          path: mcu_test_proj/build/bxarm-debug/*.elf
-      - name: Create issue on failure
-        if: failure()
-        uses: peter-evans/create-issue-from-file@v5
-        with:
-          title: "Building for target HW failed"
-          content-filepath: ./build-failure.txt
-          labels: bug, build-failure
+  
+  Build:
+    name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
+    uses: ./.github/workflows/reusable_build.yml
+    with: 
+      toolchain: ${{ github.event_name == 'workflow_dispatch' && inputs.toolchain || 'bxarm-toolchain'}}
+      configuration: ${{ github.event_name == 'workflow_dispatch' && inputs.configuration || 'release'}} # Maybe relase\debug
+    needs: 'Build_and_test_target_HW'
+
   Deploy:
-    runs-on: [self-hosted, linux]
-    needs: [ BXARM_build, ARM-NONE-EABI-GCC_build]
-    if: |
-      always()
-      && contains(needs.*.result, 'success')
-      && !contains(needs.*.result, 'skipped')
-    steps:
-      - name: Download ELF
-        uses: actions/download-artifact@v4
-        with:
-          name: STM32-Microcontroller_Binary
-          path: ./
-
-      - name: Flash to MCU and test
-        run: |
-          ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
-
-
-
-  # BXARM:
-  #   uses: ./.github/workflows/deploy_and_test.yml
-  #   needs: BXARM_build
- 
-  # ARM-NONE-EABI-GCC:
-  #   uses: ./.github/workflows/deploy_and_test.yml
-  #   needs: ARM-NONE-EABI-GCC_build
+    name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
+    uses: ./.github/workflows/reusable_deploy_and_test.yml
+    needs: Build
