@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 jobs:
-  Deploy_firmware:
+  Target-Deploy_firmware:
     runs-on: [self-hosted, linux]
     steps:
       - name: Download ELF

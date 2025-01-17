@@ -1,13 +1,27 @@
-name: HHLA Sky SC - CI/CD Main
+name: HHLA Sky SC - CI/CD 
 
 on: 
   pull_request:
     branches: 
       - main
   workflow_dispatch:
+    inputs:
+        toolchain:
+          type: choice
+          description: Select toolchain
+          options:
+          - stm32-gcc-toolchain
+          - bxarm-toolchain
+        configuration:
+          type: choice
+          description: Select toolchain
+          options:
+            - debug
+            - release
+          default: 'debug'
       
 jobs:
-  Build:
+  Linux-Build:
     runs-on: ubuntu-22.04
     steps:
       - name: Setup Ubuntu
@@ -54,9 +68,9 @@ jobs:
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
 
-  Test:
+  Linux-Unit_Test:
     runs-on: ubuntu-22.04
-    needs: Build  # Ensures test job runs after build job
+    needs: Linux-Build  # Ensures test job runs after build job
 
     steps:
       # Download build artifact from build job
@@ -83,3 +97,16 @@ jobs:
           title: "Test Failed"
           content-filepath: ./test-failure.txt
           labels: bug, test-failure
+
+  Target-Build:
+    name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
+    uses: ./.github/workflows/reusable_build.yml
+    with: 
+      toolchain: ${{ github.event_name == 'workflow_dispatch' && inputs.toolchain || 'bxarm-toolchain'}}
+      configuration: ${{ github.event_name == 'workflow_dispatch' && inputs.configuration || 'release'}} # Maybe relase\debug
+    needs: Linux-Unit_Test
+
+  Target-Deploy:
+    name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
+    uses: ./.github/workflows/reusable_deploy_and_test.yml
+    needs: Target-Build
