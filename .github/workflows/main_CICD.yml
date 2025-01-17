@@ -113,8 +113,8 @@ jobs:
     needs: Linux-Unit_Test
     if: |
       always()
-      && contains(needs.*.result, 'skipped')
-
+      && !contains(needs.*.result, 'failure')
+      && !contains(needs.*.result, 'cancelled')
   Target-Deploy:
     name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
     uses: ./.github/workflows/reusable_deploy_and_test.yml
