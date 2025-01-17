@@ -6,22 +6,27 @@ on:
       - main
   workflow_dispatch:
     inputs:
-        toolchain:
-          type: choice
-          description: Select toolchain
-          options:
-          - stm32-gcc-toolchain
-          - bxarm-toolchain
-        configuration:
-          type: choice
-          description: Select toolchain
-          options:
-            - debug
-            - release
-          default: 'debug'
+      toolchain:
+        type: choice
+        description: Select toolchain
+        options:
+        - stm32-gcc-toolchain
+        - bxarm-toolchain
+        default: 'stm32-gcc-toolchain'
+      configuration:
+        type: choice
+        description: Select toolchain
+        options:
+          - debug
+          - release
+        default: 'debug'
+      run-linux-jobs:
+        type: boolean
+        required: true
       
 jobs:
   Linux-Build:
+    if: ${{github.event == 'pull_request' || inputs.run-linux-jobs == true}}
     runs-on: ubuntu-22.04
     steps:
       - name: Setup Ubuntu
@@ -69,6 +74,7 @@ jobs:
           labels: bug, build-failure
 
   Linux-Unit_Test:
+    if: ${{github.event == 'pull_request' || inputs.run-linux-jobs == true}}
     runs-on: ubuntu-22.04
     needs: Linux-Build  # Ensures test job runs after build job
 
@@ -105,6 +111,9 @@ jobs:
       toolchain: ${{ github.event_name == 'workflow_dispatch' && inputs.toolchain || 'bxarm-toolchain'}}
       configuration: ${{ github.event_name == 'workflow_dispatch' && inputs.configuration || 'release'}} # Maybe relase\debug
     needs: Linux-Unit_Test
+    if: |
+      always()
+      && contains(needs.*.result, 'skipped')
 
   Target-Deploy:
     name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
