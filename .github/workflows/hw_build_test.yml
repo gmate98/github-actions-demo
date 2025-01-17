@@ -5,6 +5,10 @@ on:
     workflows: ["HHLA Sky SC - CI/CD Main"]
     types:
       - completed
+  
+  # pull_request:
+  #   branches: 
+  #     - main
 
   workflow_dispatch:
     inputs:
