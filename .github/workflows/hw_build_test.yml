@@ -1,10 +1,14 @@
 name: HHLA Sky SC - Target HW Build and Test
 
 on: 
-  workflow_run:
-    workflows: ["HHLA Sky SC - CI/CD Main"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["HHLA Sky SC - CI/CD Main"]
+  #   types:
+  #     - completed
+  
+  pull_request:
+    branches: 
+      - main
 
   workflow_dispatch:
     inputs:
@@ -26,7 +30,7 @@ jobs:
   Build_and_test_target_HW:
     name: "Build and test for/on HW"
     runs-on: [self-hosted, linux]
-    if: ${{ (github.event.workflow_run.conclusion == 'success') || (github.event_name == 'workflow_dispatch')}}
+    # if: ${{ (github.event.workflow_run.conclusion == 'success') || (github.event_name != 'workflow_run')}}
     steps:
       - name: Setup
         run: |
