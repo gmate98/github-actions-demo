@@ -119,3 +119,6 @@ jobs:
     name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
     uses: ./.github/workflows/reusable_deploy_and_test.yml
     needs: Target-Build
+    if: |
+      always()
+      && contains(needs.*.result, 'success')
