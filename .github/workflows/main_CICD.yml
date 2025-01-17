@@ -7,8 +7,7 @@ on:
   workflow_dispatch:
       
 jobs:
-  build:
-    name: "Build Main CI/CD"
+  Build:
     runs-on: ubuntu-22.04
     steps:
       - name: Setup Ubuntu
@@ -55,17 +54,11 @@ jobs:
           content-filepath: ./build-failure.txt
           labels: bug, build-failure
 
-  test:
-    name: "Test Main CI/CD"
+  Test:
     runs-on: ubuntu-22.04
-    needs: build  # Ensures test job runs after build job
+    needs: Build  # Ensures test job runs after build job
 
     steps:
-      # - name: Checkout Repository
-      #   uses: actions/checkout@v4
-      #   with:
-      #     submodules: recursive
-
       # Download build artifact from build job
       - name: Download build artifact
         uses: actions/download-artifact@v4
