@@ -1,0 +1,31 @@
+name: HHLA Sky SC - Target HW
+
+on: 
+  workflow_dispatch:
+    inputs:
+        toolchain:
+          type: choice
+          description: Select toolchain
+          options:
+          - stm32-gcc-toolchain
+          - bxarm-toolchain
+        configuration:
+          type: choice
+          description: Select toolchain
+          options:
+            - debug
+            - release
+          default: 'debug'
+
+jobs:
+  Target-Build:
+    name: ${{inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
+    uses: ./.github/workflows/reusable_build.yml
+    with: 
+      toolchain: ${{inputs.toolchain}}
+      configuration: ${{inputs.configuration}} # Maybe relase\debug
+
+  Target-Deploy:
+    name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
+    uses: ./.github/workflows/reusable_deploy_and_test.yml
+    needs: Target-Build
