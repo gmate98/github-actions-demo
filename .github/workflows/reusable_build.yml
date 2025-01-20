@@ -19,20 +19,21 @@ jobs:
         with:
           submodules: recursive
           ref: main
- 
+
       - name: Set up Toolchain and Compile STM32 Project
         run: |
           cd mcu_test_proj
           rm -rf build
           cmake . --preset=${{inputs.toolchain}}-${{inputs.configuration}}
           cmake --build --preset=${{inputs.toolchain}}-${{inputs.configuration}}
- 
+      
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/${{inputs.toolchain}}-${{inputs.configuration}}/*.elf
+      
       - name: Create issue on failure
         if: failure()
         uses: peter-evans/create-issue-from-file@v5

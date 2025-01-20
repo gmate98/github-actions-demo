@@ -1,0 +1,62 @@
+name: Publish to GitHub Packages
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      toolchain:
+        type: choice
+        description: Select toolchain for the build
+        options:
+          - bxarm
+          - stm32-gcc-toolchain
+        default: bxarm
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Step 2: Setup dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt update && sudo apt install -y \
+          cmake \
+          build-essential \
+          gcc \
+          g++
+
+      # Step 3: Trigger Reusable Build Workflow
+      - name: Trigger Reusable Build
+        uses: ./.github/workflows/reusable_build.yml
+        with:
+          toolchain: ${{ github.event.inputs.toolchain || 'bxarm' }}
+          configuration: release
+
+      # Step 4: Download the built artifact
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+
+      # Step 5: Package the build artifact
+      - name: Package Artifact
+        run: |
+          mkdir -p release-packages
+          mv STM32-Microcontroller_Binary release-packages/
+          cd release-packages
+          tar -czvf stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz STM32-Microcontroller_Binary
+
+      # Step 6: Publish the package to GitHub Packages
+      - name: Upload to GitHub Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: stm32_project_${{ github.event.release.tag_name || 'latest' }}
+          path: release-packages/stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz
