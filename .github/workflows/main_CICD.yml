@@ -25,6 +25,7 @@ on:
         required: true
   release:
     types: [created]   
+
 jobs:
   Linux-Build:
     if: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
@@ -95,6 +96,13 @@ jobs:
       - name: Run tests
         run: |
           ctest --test-dir build -j$(nproc --all) -C Debug
+      
+      - name: Debug Condition
+        run: echo "Condition evaluated to ${{ github.event_name == 'release' || github.event.pull_request.merged || (github.event_name == 'workflow_dispatch' && inputs.configuration == 'release') }}"
+      
+      - name: Log GitHub Context
+        run: echo "${{ toJson(github) }}"
+      
 
       # Create issue on failure
       - name: Create issue on failure
@@ -126,9 +134,9 @@ jobs:
       && contains(needs.*.result, 'success')
   
   GitHub-Package:
-    if: ${{github.event_name == 'release' || github.event.pull_request.merged || (github.event_name == 'workflow_dispatch' && inputs.configuration == 'release') }}
+    if: ${{ github.event_name == 'release' || github.event.pull_request.merged || (github.event_name == 'workflow_dispatch' && inputs.configuration == 'release') }}
     runs-on: ubuntu-22.04
-    needs: Target-Deploy
+    needs: Target-Build
 
     steps:
       - name: Download ELF
@@ -136,7 +144,7 @@ jobs:
         with:
           name: STM32-Microcontroller_Binary
           path: ./
-          
+
       - name: Package Artifact 
         run: |
           mkdir -p release-packages
