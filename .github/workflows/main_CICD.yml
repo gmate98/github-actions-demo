@@ -159,7 +159,8 @@ jobs:
           tar -czvf stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz *.elf
 
       # Create a Release (if it doesn't exist)
-      - name: create_release
+      - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: ${{ github.event.release.tag_name || 'v-latest' }}
