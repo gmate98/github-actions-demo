@@ -37,9 +37,9 @@ jobs:
       - name: Trigger Reusable Build
         uses: ./.github/workflows/reusable_build.yml
         with:
-          toolchain: ${{ github.event.inputs.toolchain || 'bxarm' }}
+          toolchain: ${{ github.event.inputs.toolchain || 'bxarm-toolchain' }}
           configuration: release
-
+          
       # Step 4: Download the built artifact
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
