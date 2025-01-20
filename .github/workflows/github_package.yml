@@ -14,40 +14,31 @@ on:
         default: bxarm
 
 jobs:
-  build-and-publish:
-    runs-on: ubuntu-latest
-
+  Linux-Build:
+    runs-on: ubuntu-22.04
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # Step 2: Setup dependencies
-      - name: Install Dependencies
-        run: |
-          sudo apt update && sudo apt install -y \
-          cmake \
-          build-essential \
-          gcc \
-          g++
+  Target-Build:
+    name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
+    uses: ./.github/workflows/reusable_build.yml
+    with:
+      toolchain: ${{ github.event.inputs.toolchain || 'bxarm-toolchain' }}
+      configuration: release
+    
+  Download-artifacts:
+    runs-on: ubuntu-22.04
 
-      # Step 3: Trigger Reusable Build Workflow
-      - name: Trigger Reusable Build
-        uses: ./.github/workflows/reusable_build.yml
-        with:
-          toolchain: ${{ github.event.inputs.toolchain || 'bxarm-toolchain' }}
-          configuration: release
-          
-      # Step 4: Download the built artifact
+    steps:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: STM32-Microcontroller_Binary
           path: mcu_test_proj/build/${{github.event.inputs.toolchain}}-release/*.elf
 
-      # Step 5: Package the build artifact
       - name: Package Artifact
         run: |
           mkdir -p release-packages
@@ -55,7 +46,6 @@ jobs:
           cd release-packages
           tar -czvf stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz STM32-Microcontroller_Binary
 
-      # Step 6: Publish the package to GitHub Packages
       - name: Upload to GitHub Packages
         uses: actions/upload-artifact@v4
         with:
