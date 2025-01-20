@@ -9,9 +9,9 @@ on:
         type: choice
         description: Select toolchain for the build
         options:
-          - bxarm
+          - bxarm-toolchain
           - stm32-gcc-toolchain
-        default: bxarm
+        default: bxarm-toolchain
 
 jobs:
   Linux-Build:
