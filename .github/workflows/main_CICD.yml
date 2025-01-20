@@ -29,16 +29,6 @@ jobs:
     if: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
     runs-on: ubuntu-22.04
     steps:
-      - name: Cache Build Dependencies
-        uses: actions/cache@v4
-        with:
-          path: | 
-            ~/.cmake/packages
-            ~/.local/share/cmake
-          key: ${{ runner.os }}-cmake-packages-${{ hashFiles('**/CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-packages-
-
       - name: Setup Ubuntu
         run: |
           sudo apt update && sudo apt install -y \
@@ -75,7 +65,7 @@ jobs:
           path: |
             build/*.deb
             build/*.rpm
-            build/
+            build
 
       # Create issue on failure
       - name: Create issue on failure
