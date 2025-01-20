@@ -126,11 +126,17 @@ jobs:
       && contains(needs.*.result, 'success')
   
   GitHub-Package:
-    if: ${{github.event_name == 'release' || github.event.pull_request.merged}}
+    if: ${{github.event_name == 'release' || github.event.pull_request.merged || (github.event_name == 'workflow_dispatch' && inputs.configuration == 'release') }}
     runs-on: ubuntu-22.04
     needs: Target-Deploy
 
     steps:
+      - name: Download ELF
+        uses: actions/download-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: ./
+          
       - name: Package Artifact 
         run: |
           mkdir -p release-packages
