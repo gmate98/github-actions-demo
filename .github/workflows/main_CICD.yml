@@ -1,4 +1,4 @@
-name: HHLA Sky SC - CI/CD 
+name: HHLA Sky SC - CI/CD
 
 on: 
   pull_request:
@@ -10,8 +10,8 @@ on:
         type: choice
         description: Select toolchain
         options:
-        - stm32-gcc-toolchain
-        - bxarm-toolchain
+          - stm32-gcc-toolchain
+          - bxarm-toolchain
         default: 'stm32-gcc-toolchain'
       configuration:
         type: choice
@@ -26,9 +26,19 @@ on:
       
 jobs:
   Linux-Build:
-    if: ${{github.event_name == 'pull_request' || inputs.run-linux-jobs == true}}
+    if: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
     runs-on: ubuntu-22.04
     steps:
+      - name: Cache Build Dependencies
+        uses: actions/cache@v4
+        with:
+          path: | 
+            ~/.cmake/packages
+            ~/.local/share/cmake
+          key: ${{ runner.os }}-cmake-packages-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-packages-
+
       - name: Setup Ubuntu
         run: |
           sudo apt update && sudo apt install -y \
@@ -62,7 +72,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: build
+          path: |
+            build/*.deb
+            build/*.rpm
+            build/
 
       # Create issue on failure
       - name: Create issue on failure
@@ -115,6 +128,7 @@ jobs:
       always()
       && !contains(needs.*.result, 'failure')
       && !contains(needs.*.result, 'cancelled')
+
   Target-Deploy:
     name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
     uses: ./.github/workflows/reusable_deploy_and_test.yml

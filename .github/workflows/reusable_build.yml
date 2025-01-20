@@ -19,20 +19,41 @@ jobs:
         with:
           submodules: recursive
           ref: main
- 
+      
+      - name: Install Toolchain Packages
+        run: |
+          if [ "${{ inputs.toolchain }}" == "stm32-gcc-toolchain" ]; then
+            sudo apt-get install -y gcc-arm-none-eabi;
+          elif [ "${{ inputs.toolchain }}" == "bxarm-toolchain" ]; then
+            curl -O https://path/to/bxarm/toolchain.zip && unzip toolchain.zip -d /opt;
+            export PATH="/opt/bxarm/bin:$PATH";
+          fi
+
+      - name: Download Dependencies
+        run: |
+          if [ "${{ inputs.toolchain }}" == "stm32-gcc-toolchain" ]; then
+            wget -qO- https://example.com/stm32-packages.tar.gz | tar xz -C ~/.local/share/cmake;
+          elif [ "${{ inputs.toolchain }}" == "bxarm-toolchain" ]; then
+            wget -qO- https://example.com/bxarm-packages.tar.gz | tar xz -C ~/.local/share/cmake;
+          fi
+
       - name: Set up Toolchain and Compile STM32 Project
         run: |
           cd mcu_test_proj
           rm -rf build
           cmake . --preset=${{inputs.toolchain}}-${{inputs.configuration}}
           cmake --build --preset=${{inputs.toolchain}}-${{inputs.configuration}}
- 
+      
       - name: Upload Build Artifacts
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: STM32-Microcontroller_Binary
-          path: mcu_test_proj/build/${{inputs.toolchain}}-${{inputs.configuration}}/*.elf
+          name: Build_Artifacts
+          path: |
+            mcu_test_proj/build/${{ inputs.toolchain }}-${{ inputs.configuration }}/*.elf
+            mcu_test_proj/build/${{ inputs.toolchain }}-${{ inputs.configuration }}/*.map
+            mcu_test_proj/build/packages/
+      
       - name: Create issue on failure
         if: failure()
         uses: peter-evans/create-issue-from-file@v5
