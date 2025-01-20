@@ -23,7 +23,8 @@ on:
       run-linux-jobs:
         type: boolean
         required: true
-      
+  release:
+    types: [created]   
 jobs:
   Linux-Build:
     if: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
@@ -123,3 +124,22 @@ jobs:
     if: |
       always()
       && contains(needs.*.result, 'success')
+  
+  GitHub-Package:
+    if: ${{github.event_name == 'release' || github.event.pull_request.merged}}
+    runs-on: ubuntu-22.04
+    needs: Target-Deploy
+
+    steps:
+      - name: Package Artifact 
+        run: |
+          mkdir -p release-packages
+          mv STM32-Microcontroller_Binary release-packages/
+          cd release-packages
+          tar -czvf stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz STM32-Microcontroller_Binary
+
+      - name: Upload to GitHub Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: stm32_project_${{ github.event.release.tag_name || 'latest' }}
+          path: release-packages/stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz
