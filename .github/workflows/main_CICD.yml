@@ -15,7 +15,7 @@ on:
         default: 'stm32-gcc-toolchain'
       configuration:
         type: choice
-        description: Select toolchain
+        description: Select configuration
         options:
           - debug
           - release

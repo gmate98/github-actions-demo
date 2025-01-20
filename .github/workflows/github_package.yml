@@ -45,6 +45,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: STM32-Microcontroller_Binary
+          path: mcu_test_proj/build/${{github.event.inputs.toolchain}}-release/*.elf
 
       # Step 5: Package the build artifact
       - name: Package Artifact
