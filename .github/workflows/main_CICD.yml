@@ -135,9 +135,12 @@ jobs:
       # Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
 
       # Download ELF Artifact
-      - name: Download ELF
+      - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: STM32-Microcontroller_Binary
