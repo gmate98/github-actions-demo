@@ -1,9 +1,9 @@
-name: HHLA Sky SC - CI/CD
+name: Release Creation 
 
 on:
   push:
     tags:
-        - '*'
+      - '*'
   workflow_dispatch:
     inputs:
       toolchain:
@@ -23,41 +23,44 @@ on:
       run-linux-jobs:
         type: boolean
         required: true
+
 jobs:
-  
+  Main-Workflow:
+    uses: ./.github/workflows/main_CICD.yml
+    with:
+      toolchain: ${{ github.event_name == 'workflow_dispatch' && inputs.toolchain || 'bxarm-toolchain' }}
+      configuration: 'release'
+      run-linux-jobs: ${{ github.event_name == 'workflow_dispatch' && inputs.run-linux-jobs || true  }}
+
   GitHub-Package:
     runs-on: ubuntu-22.04
+    needs: Main-Workflow
 
     steps:
-        # Checkout Repository
-        - name: Checkout Repository
-          uses: actions/checkout@v4
-          with:
-            submodules: recursive
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
+      - name: Download ELF Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: STM32-Microcontroller_Binary
+          path: ./STM32-Microcontroller_Binary
 
-        # Download ELF Artifact
-        - name: Download Artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: STM32-Microcontroller_Binary
-            path: ./STM32-Microcontroller_Binary
+      - name: Package Artifact 
+        run: |
+          mkdir -p release-packages
+          mv STM32-Microcontroller_Binary/*.elf release-packages/
+          cd release-packages
+          tar -czvf stm32_project_${{ github.ref_name || 'latest' }}.tar.gz *.elf
 
-        # Package Artifact
-        - name: Package Artifact 
-          run: |
-            mkdir -p release-packages
-            mv STM32-Microcontroller_Binary/*.elf release-packages/
-            cd release-packages
-            tar -czvf stm32_project_${{ github.ref_name || 'latest' }}.tar.gz *.elf
-
-        # Create a Release (if it doesn't exist)
-        - name: Create release
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            tag: ${{ github.ref_name }}
-          run: |
-            gh release create "$tag" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} $GITHUB_REF_NAME" \
-              --generate-notes
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: |
+          gh release create "$tag" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="${GITHUB_REPOSITORY#*/} $GITHUB_REF_NAME" \
+            --generate-notes

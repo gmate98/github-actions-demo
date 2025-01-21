@@ -24,7 +24,18 @@ on:
         type: boolean
         required: true
   release:
-    types: [created]   
+    types: [created]
+  workflow_call:
+    inputs:
+      toolchain:
+        required: true
+        type: string
+      configuration:
+        required: true
+        type: string
+      run-linux-jobs:
+        required: true
+        type: boolean 
 
 jobs:
   Linux-Build:
