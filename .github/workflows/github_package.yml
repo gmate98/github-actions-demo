@@ -1,0 +1,63 @@
+name: HHLA Sky SC - CI/CD
+
+on:
+  push:
+    tags:
+        - '*'
+  workflow_dispatch:
+    inputs:
+      toolchain:
+        type: choice
+        description: Select toolchain
+        options:
+          - stm32-gcc-toolchain
+          - bxarm-toolchain
+        default: 'stm32-gcc-toolchain'
+      configuration:
+        type: choice
+        description: Select configuration
+        options:
+          - debug
+          - release
+        default: 'debug'
+      run-linux-jobs:
+        type: boolean
+        required: true
+jobs:
+  
+  GitHub-Package:
+    runs-on: ubuntu-22.04
+
+    steps:
+        # Checkout Repository
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+          with:
+            submodules: recursive
+
+
+        # Download ELF Artifact
+        - name: Download Artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: STM32-Microcontroller_Binary
+            path: ./STM32-Microcontroller_Binary
+
+        # Package Artifact
+        - name: Package Artifact 
+          run: |
+            mkdir -p release-packages
+            mv STM32-Microcontroller_Binary/*.elf release-packages/
+            cd release-packages
+            tar -czvf stm32_project_${{ github.ref_name || 'latest' }}.tar.gz *.elf
+
+        # Create a Release (if it doesn't exist)
+        - name: Create release
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            tag: ${{ github.ref_name }}
+          run: |
+            gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} $GITHUB_REF_NAME" \
+              --generate-notes

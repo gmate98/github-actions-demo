@@ -29,89 +29,23 @@ on:
 jobs:
   Linux-Build:
     if: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Setup Ubuntu
-        run: |
-          sudo apt update && sudo apt install -y \
-          build-essential \
-          cmake \
-          binutils \
-          gcc-multilib \
-          g++-multilib \
-          gcovr \
-          git
-
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      # Configure the project using CMake
-      - name: Configure with CMake
-        run: |
-          mkdir -p build
-          cmake -S . -B build
-
-      # Build the project
-      - name: Build project
-        run: |
-          cmake --build build -j$(nproc --all)
-
-      # Upload build directory as artifact for testing job
-      - name: Upload build artifact
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: build
-
-      # Create issue on failure
-      - name: Create issue on failure
-        if: failure()
-        uses: peter-evans/create-issue-from-file@v5
-        with:
-          title: "Build Failed"
-          content-filepath: ./build-failure.txt
-          labels: bug, build-failure
+    uses: ./.github/workflows/reusable_linux_build.yml
+    with:
+      run-linux-jobs: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
 
   Linux-Unit_Test:
     if: ${{github.event_name == 'pull_request' || inputs.run-linux-jobs == true}}
-    runs-on: ubuntu-22.04
-    needs: Linux-Build  # Ensures test job runs after build job
-
-    steps:
-      # Download build artifact from build job
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: build
-
-      # Grant execute permissions to test binaries
-      - name: Grant execute permissions to test binaries
-        run: chmod +x build/tests/*
-
-      # Run tests using CTest
-      - name: Run tests
-        run: |
-          ctest --test-dir build -j$(nproc --all) -C Debug
-
-      # Create issue on failure
-      - name: Create issue on failure
-        if: failure()
-        uses: peter-evans/create-issue-from-file@v5
-        with:
-          title: "Test Failed"
-          content-filepath: ./test-failure.txt
-          labels: bug, test-failure
+    uses: ./.github/workflows/reusable_linux_unit_test.yml
+    needs: Linux-Build
+    with:
+      run-linux-jobs: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
 
   Target-Build:
     name: ${{ inputs.toolchain == 'stm32-gcc-toolchain' && 'STM32-GCC' || 'BXARM'}}
     uses: ./.github/workflows/reusable_build.yml
     with: 
       toolchain: ${{ github.event_name == 'workflow_dispatch' && inputs.toolchain || 'bxarm-toolchain'}}
-      configuration: ${{ github.event_name == 'workflow_dispatch' && inputs.configuration || 'release'}} # Maybe relase\debug
+      configuration: ${{ github.event_name == 'workflow_dispatch' && inputs.configuration || 'release'}}
     needs: Linux-Unit_Test
     if: |
       always()
@@ -125,65 +59,3 @@ jobs:
     if: |
       always()
       && contains(needs.*.result, 'success')
-  
-  GitHub-Package:
-    if: ${{ github.event_name == 'release' || github.event.pull_request.merged || (github.event_name == 'workflow_dispatch' && inputs.configuration == 'release') }}
-    runs-on: ubuntu-22.04
-    needs: Target-Build
-
-    steps:
-      # Checkout Repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-
-      # Download ELF Artifact
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: STM32-Microcontroller_Binary
-          path: ./STM32-Microcontroller_Binary
-
-      # Package Artifact
-      - name: Package Artifact 
-        run: |
-          mkdir -p release-packages
-          mv STM32-Microcontroller_Binary/*.elf release-packages/
-          cd release-packages
-          tar -czvf stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz *.elf
-
-      # Create a Release (if it doesn't exist)
-      - name: Create release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-        run: |
-          gh release create "$tag" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} $GITHUB_REF_NAME" \
-              --generate-notes
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   with:
-      #     tag_name: ${{ github.event.release.tag_name || 'v-latest' }}
-      #     release_name: STM32 Release ${{ github.event.release.tag_name || 'latest' }}
-      #     body: |
-      #       This release contains the latest build for STM32 project.
-      #     draft: false
-      #     prerelease: false
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Upload Artifact to Release
-      # - name: Upload Artifact to Release
-      #   uses: actions/upload-release-asset@v1
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: release-packages/stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz
-      #     asset_name: stm32_project_${{ github.event.release.tag_name || 'latest' }}.tar.gz
-      #     asset_content_type: application/gzip
-
-
