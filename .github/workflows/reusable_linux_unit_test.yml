@@ -1,0 +1,34 @@
+name: Reusable Linux Unit Test
+
+on:
+  workflow_call:
+    inputs:
+      run-linux-jobs:
+        required: true
+        type: boolean
+
+jobs:
+  Linux-Unit_Test:
+    if: ${{ inputs.run-linux-jobs }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: build
+
+      - name: Grant execute permissions to test binaries
+        run: chmod +x build/tests/*
+
+      - name: Run tests
+        run: |
+          ctest --test-dir build -j$(nproc --all) -C Debug
+
+      - name: Create issue on failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Test Failed"
+          content-filepath: ./test-failure.txt
+          labels: bug, test-failure
