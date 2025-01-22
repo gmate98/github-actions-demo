@@ -23,8 +23,9 @@ on:
       run-linux-jobs:
         type: boolean
         required: true
-  release:
-    types: [created]
+      run-HITL-tests-jobs:
+        type: boolean
+        required: true
   workflow_call:
     inputs:
       toolchain:
