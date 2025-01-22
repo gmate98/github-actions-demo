@@ -28,7 +28,7 @@ jobs:
     with:
       toolchain: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.toolchain || 'bxarm-toolchain' }}
       configuration: 'release'
-      run-linux-jobs: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run-linux-jobs || true }}
+      run-linux-jobs: ${{ github.event_name == 'workflow_dispatch' && inputs.run-linux-jobs || true  }}
 
   GitHub-Package:
     runs-on: ubuntu-22.04
