@@ -9,7 +9,6 @@ on:
 
 jobs:
   Linux-Unit_Test:
-    if: ${{ inputs.run-linux-jobs }}
     runs-on: ubuntu-22.04
     steps:
       - name: Download build artifact

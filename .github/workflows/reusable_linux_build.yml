@@ -9,7 +9,6 @@ on:
 
 jobs:
   Linux-Build:
-    if: ${{ inputs.run-linux-jobs }}
     runs-on: ubuntu-22.04
     steps:
       - name: Setup Ubuntu
