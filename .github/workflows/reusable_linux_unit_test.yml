@@ -22,8 +22,15 @@ jobs:
 
       - name: Run tests
         run: |
-          ctest --test-dir build -j$(nproc --all) -C Debug
+          mkdir -p test-results
+          ctest --test-dir build -j$(nproc --all) -C Debug --output-log test-results/test-log.txt
 
+      - name: Save Test Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test_Results
+          path: test-results
+        
       - name: Create issue on failure
         if: failure()
         uses: peter-evans/create-issue-from-file@v5

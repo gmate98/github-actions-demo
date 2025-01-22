@@ -17,3 +17,13 @@ jobs:
         run: |
           ${HOME}/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/STM32_Programmer_CLI -c port=SWD -d mcu_test_proj.elf -g
 
+  # Taget-HIL-Test_firmware:
+  #   runs-on: [self-hosted, linux]
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         submodules: recursive
+  #         ref: ${{ github.event.ref }}
+      
+      #- name: 

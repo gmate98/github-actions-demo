@@ -40,20 +40,30 @@ jobs:
           git tag ${{ github.event.inputs.tag_name }}
           git push origin ${{ github.event.inputs.tag_name }}
 
-      - name: Download Artifact
+      - name: Download STM32 Artifact
         uses: actions/download-artifact@v4
         with:
           name: STM32-Microcontroller_Binary
           path: ./STM32-Microcontroller_Binary
 
-      - name: Package Artifact 
+      - name: Download Test Results
+        uses: actions/download-artifact@v4
+        with:
+          name: Test_Results
+          path: ./Test_Results
+
+      - name: Package Artifacts
         run: |
           mkdir -p release-packages
+          # Include binary files
           mv STM32-Microcontroller_Binary/*.elf release-packages/
+          # Include test results
+          mv Test_Results/* release-packages/
           cd release-packages
-          tar -czvf stm32_project_${{ github.event.inputs.tag_name || 'latest' }}.tar.gz *.elf
+          # Package all into a single tar.gz file
+          tar -czvf stm32_project_${{ github.event.inputs.tag_name || 'latest' }}.tar.gz *
 
-      - name: Create release
+      - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.event.inputs.tag_name }}
@@ -61,4 +71,5 @@ jobs:
           gh release create "$tag" \
             --repo="$GITHUB_REPOSITORY" \
             --title="${GITHUB_REPOSITORY#*/} $tag" \
-            --generate-notes
+            --generate-notes \
+            ./release-packages/stm32_project_${{ github.event.inputs.tag_name || 'latest' }}.tar.gz
