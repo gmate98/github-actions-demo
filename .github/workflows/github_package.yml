@@ -17,23 +17,17 @@ on:
           - stm32-gcc-toolchain
           - bxarm-toolchain
         default: 'stm32-gcc-toolchain'
-      configuration:
-        type: choice
-        description: "Select configuration"
-        options:
-          - debug
-          - release
-        default: 'debug'
       run-linux-jobs:
         type: boolean
         required: true
+        default: true
 
 jobs:
   Main-Workflow:
     uses: ./.github/workflows/main_CICD.yml
     with:
       toolchain: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.toolchain || 'bxarm-toolchain' }}
-      configuration: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.configuration || 'release' }}
+      configuration: 'release'
       run-linux-jobs: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.run-linux-jobs || 'true' }}
 
   GitHub-Package:
