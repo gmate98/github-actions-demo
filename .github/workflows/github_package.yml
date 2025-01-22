@@ -52,13 +52,21 @@ jobs:
           name: Test_Results
           path: ./Test_Results
 
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./build
+
       - name: Package Artifacts
         run: |
           mkdir -p release-packages
-          # Include binary files
+          # Include STM32 binaries
           mv STM32-Microcontroller_Binary/*.elf release-packages/
           # Include test results
           mv Test_Results/* release-packages/
+          # Include build artifact
+          mv build/* release-packages/
           cd release-packages
           # Package all into a single tar.gz file
           tar -czvf stm32_project_${{ github.event.inputs.tag_name || 'latest' }}.tar.gz *
