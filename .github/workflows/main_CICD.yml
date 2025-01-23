@@ -41,6 +41,7 @@ on:
 jobs:
   Linux-Build:
     if: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
+    name: Linux-Build
     uses: ./.github/workflows/reusable_linux_build.yml
     with:
       run-linux-jobs: ${{ github.event_name == 'pull_request' || inputs.run-linux-jobs == true }}
