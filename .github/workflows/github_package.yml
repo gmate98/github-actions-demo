@@ -15,7 +15,7 @@ on:
           - bxarm-toolchain
         default: 'bxarm-toolchain'
         
-run-name: Release ${{ inputs.tag_name}} creation by @${{ github.actor }}
+run-name: Release creation with tag:${{ inputs.tag_name}} by @${{ github.actor }}
 
 jobs:
   Main-Workflow:
