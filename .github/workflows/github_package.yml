@@ -14,10 +14,11 @@ on:
           - stm32-gcc-toolchain
           - bxarm-toolchain
         default: 'bxarm-toolchain'
+        
+run-name: Release ${{ inputs.tag_name}} creation by @${{ github.actor }}
 
 jobs:
   Main-Workflow:
-    name: Linux-Build
     uses: ./.github/workflows/main_CICD.yml
     with:
       toolchain: ${{ github.event.inputs.toolchain }}
