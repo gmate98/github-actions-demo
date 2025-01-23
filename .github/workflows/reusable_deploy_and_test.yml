@@ -5,7 +5,6 @@ on:
 
 jobs:
   Target-Deploy_firmware:
-    name: Target-Deploy_firmware
     runs-on: [self-hosted, linux]
     steps:
       - name: Download ELF
