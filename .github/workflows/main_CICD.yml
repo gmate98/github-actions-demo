@@ -1,7 +1,5 @@
 name: HHLA Sky SC - CI/CD
 
-run-name: HHLA Sky SC - CI/CD / commit message:${{ github.event.head_commit.message }} by @${{ github.actor }}
-
 on: 
   pull_request:
     branches: 
