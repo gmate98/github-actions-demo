@@ -17,6 +17,7 @@ on:
 
 jobs:
   Main-Workflow:
+    name: Linux-Build
     uses: ./.github/workflows/main_CICD.yml
     with:
       toolchain: ${{ github.event.inputs.toolchain }}
