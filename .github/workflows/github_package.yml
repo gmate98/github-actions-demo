@@ -18,6 +18,20 @@ on:
 run-name: Release creation with tag:${{ inputs.tag_name}} by @${{ github.actor }}
 
 jobs:
+  Create-Tag:
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag ${{ github.event.inputs.tag_name }}
+          git push origin ${{ github.event.inputs.tag_name }}
+
   Main-Workflow:
     uses: ./.github/workflows/main_CICD.yml
     with:
@@ -30,18 +44,6 @@ jobs:
     needs: Main-Workflow
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Create Tag
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git tag ${{ github.event.inputs.tag_name }}
-          git push origin ${{ github.event.inputs.tag_name }}
-
       - name: Download STM32 Artifact
         uses: actions/download-artifact@v4
         with:
@@ -57,18 +59,18 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: build
-          path: ./build
+          name: Linux-build
+          path: ./Linux-build
 
       - name: Package Artifacts
         run: |
           mkdir -p release-packages
           # Include STM32 binaries
-          mv STM32-Microcontroller_Binary/*.elf release-packages/
+          mv STM32-Microcontroller_Binary/*.elf release-packages/STM32-Microcontroller_Binary/
           # Include test results
-          mv Test_Results/* release-packages/
+          mv Test_Results release-packages/
           # Include build artifact
-          mv build/* release-packages/
+          mv Linux-build release-packages/
           cd release-packages
           # Package all into a single tar.gz file
           tar -czvf stm32_project_${{ github.event.inputs.tag_name || 'latest' }}.tar.gz *

@@ -14,8 +14,8 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: build
-          path: build
+          name: Linux-build
+          path: ./build
 
       - name: Grant execute permissions to test binaries
         run: chmod +x build/tests/*
@@ -29,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Test_Results
-          path: test-results
+          path: ./test-results
         
       - name: Create issue on failure
         if: failure()

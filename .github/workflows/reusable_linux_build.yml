@@ -41,8 +41,8 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: build
-          path: build
+          name: Linux-build
+          path: ./build
 
       - name: Create issue on failure
         if: failure()
