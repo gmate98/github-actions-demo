@@ -24,6 +24,7 @@ jobs:
         run: |
           cd mcu_test_proj
           rm -rf build
+          git tag --sort=-v.refname --merged
           cmake . --preset=${{inputs.toolchain}}-${{inputs.configuration}}
           cmake --build --preset=${{inputs.toolchain}}-${{inputs.configuration}}
       
