@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "hal.h"
+#include "version.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -100,6 +101,8 @@ int main(void)
     /* USER CODE END WHILE */
     toggleLED();
     HAL_Delay(100);
+
+    printf(&version);
 
     /* USER CODE BEGIN 3 */
   }
