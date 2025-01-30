@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "hal.h"
 #include "version.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,7 +103,8 @@ int main(void)
     toggleLED();
     HAL_Delay(100);
 
-    printf(&version);
+    //Trying it out
+    printf("v%u.%u.%u\n",version.major, version.minor, version.patch);
 
     /* USER CODE BEGIN 3 */
   }

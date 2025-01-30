@@ -26,6 +26,7 @@ add_executable(${CMAKE_PROJECT_NAME})
 
 # Add the modified list of sources to the executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    ${SHARED_DIR}/src/version.c
     # Add user sources here
 )
 
