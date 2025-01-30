@@ -44,6 +44,7 @@ foreach(TAGS_LOOP ${GIT_TAGS_ARRAY})
     endif()
 endforeach(TAGS_LOOP)
 if (NOT DEFINED MAJOR)
+    message(STATUS "CMAKE_SOURCE_DIR is ${CMAKE_SOURCE_DIR}")
     message(FATAL_ERROR "No version found")
 endif()
 
