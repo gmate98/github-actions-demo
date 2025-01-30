@@ -4,21 +4,29 @@ cmake_minimum_required(VERSION 3.22)
 project(mcu_test_proj)
 
 # Core project settings
-enable_language(CXX C ASM)
+enable_language(C ASM)
 
 # Define the build type
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
+# Define variables and glob files
+set(SHARED_DIR ../shared)
+
 # Add STM32CubeMX generated sources
 add_subdirectory(cmake/stm32cubemx)
+
+# Define a custom target that uses the custom command
+execute_process(COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/${SHARED_DIR}/src/version_output.cmake
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${SHARED_DIR}/src)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
 
 # Add the modified list of sources to the executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    ${SHARED_DIR}/src/version.c
     # Add user sources here
 )
 
@@ -29,6 +37,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    ${SHARED_DIR}/inc
     # Add user-defined include paths here
 )
 
