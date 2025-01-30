@@ -25,12 +25,14 @@ string(SUBSTRING ${GIT_HASH} 6 2 GIT_HASH_P4)
 
 
 # Get version tag
-execute_process(COMMAND ${GIT_EXECUTABLE} tag --sort=-taggerdate --merged
+execute_process(COMMAND ${GIT_EXECUTABLE} tag --sort=-v:refname --merged
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                 OUTPUT_VARIABLE GIT_TAGS)
 string(REPLACE "\n" ";" GIT_TAGS_ARRAY ${GIT_TAGS})
+message(STATUS ${GIT_TAGS_ARRAY})
 foreach(TAGS_LOOP ${GIT_TAGS_ARRAY})
     string(REGEX MATCH "^v([0-9]|[1-9][0-9]+).([0-9]|[1-9][0-9]+).([0-9]|[1-9][0-9]+)(-[Rr][Cc])?$" VERSION_MATCH ${TAGS_LOOP})
+    message(STATUS ${VERSION_MATCH})
     if(NOT ${VERSION_MATCH} STREQUAL "")
         set(MAJOR ${CMAKE_MATCH_1})
         set(MINOR ${CMAKE_MATCH_2})
