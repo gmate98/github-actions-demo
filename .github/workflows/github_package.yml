@@ -34,6 +34,7 @@ jobs:
 
   Main-Workflow:
     uses: ./.github/workflows/main_CICD.yml
+    needs: Create-Tag
     with:
       toolchain: ${{ github.event.inputs.toolchain }}
       configuration: 'release'
