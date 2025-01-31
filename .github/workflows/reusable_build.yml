@@ -17,16 +17,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures a full clone including tags
           fetch-tags: true # Fetches all tags in the repo
-          submodules: recursive
           ref: ${{ github.event.ref }}
 
       - name: Set up Toolchain and Compile STM32 Project
         run: |
-          cd shared/src
-          cmake -P version_output.cmake --trace-expand
-          cd ../../mcu_test_proj
+          cd mcu_test_proj
           rm -rf build
           cmake . --preset=${{inputs.toolchain}}-${{inputs.configuration}}
           cmake --build --preset=${{inputs.toolchain}}-${{inputs.configuration}}
