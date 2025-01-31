@@ -22,10 +22,10 @@ jobs:
 
       - name: Set up Toolchain and Compile STM32 Project
         run: |
-          cd mcu_test_proj
+          cd shared/src
+          cmake -P version_output.cmake --trace-expand
+          cd ../../mcu_test_proj
           rm -rf build
-          cd ./shared/src
-          cmake -P version_output.cmake
           cmake . --preset=${{inputs.toolchain}}-${{inputs.configuration}}
           cmake --build --preset=${{inputs.toolchain}}-${{inputs.configuration}}
       
