@@ -17,6 +17,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0  # Ensures a full clone including tags
+          fetch-tags: true # Fetches all tags in the repo
           submodules: recursive
           ref: ${{ github.event.ref }}
 
