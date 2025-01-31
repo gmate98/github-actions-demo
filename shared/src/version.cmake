@@ -28,7 +28,8 @@ string(SUBSTRING ${GIT_HASH} 6 2 GIT_HASH_P4)
 execute_process(COMMAND ${GIT_EXECUTABLE} tag --sort=-v:refname --merged
                 WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
                 OUTPUT_VARIABLE GIT_TAGS)
-string(REPLACE "\n" ";" GIT_TAGS_ARRAY "${GIT_TAGS}")
+message(STATUS "${GIT_TAGS}")
+string(REPLACE "'\n'" ";" GIT_TAGS_ARRAY "${GIT_TAGS}")
 foreach(TAGS_LOOP ${GIT_TAGS_ARRAY})
     string(REGEX MATCH "^v([0-9]|[1-9][0-9]+).([0-9]|[1-9][0-9]+).([0-9]|[1-9][0-9]+)(-[Rr][Cc])?$" VERSION_MATCH ${TAGS_LOOP})
     if(NOT ${VERSION_MATCH} STREQUAL "")
