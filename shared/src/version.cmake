@@ -6,7 +6,7 @@ endif()
 
 # Check if the directory is a git directory
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
                 RESULT_VARIABLE IS_GIT_RESULT)
 if(NOT IS_GIT_RESULT EQUAL 0)
     message(FATAL_ERROR "${CMAKE_SOURCE_DIR} is not a git repository")
@@ -14,7 +14,7 @@ endif()
 
 #get commit hash
 execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
                 OUTPUT_VARIABLE GIT_HASH)
 string(REGEX REPLACE "\n$" "" GIT_HASH "${GIT_HASH}")
 string(SUBSTRING ${GIT_HASH} 0 7 GIT_HASH_SHORT)
@@ -26,13 +26,11 @@ string(SUBSTRING ${GIT_HASH} 6 2 GIT_HASH_P4)
 
 # Get version tag
 execute_process(COMMAND ${GIT_EXECUTABLE} tag --sort=-v:refname --merged
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
                 OUTPUT_VARIABLE GIT_TAGS)
 string(REPLACE "\n" ";" GIT_TAGS_ARRAY "${GIT_TAGS}")
-message(STATUS ${GIT_TAGS_ARRAY})
 foreach(TAGS_LOOP ${GIT_TAGS_ARRAY})
     string(REGEX MATCH "^v([0-9]|[1-9][0-9]+).([0-9]|[1-9][0-9]+).([0-9]|[1-9][0-9]+)(-[Rr][Cc])?$" VERSION_MATCH ${TAGS_LOOP})
-    message(STATUS ${VERSION_MATCH})
     if(NOT ${VERSION_MATCH} STREQUAL "")
         set(MAJOR ${CMAKE_MATCH_1})
         set(MINOR ${CMAKE_MATCH_2})
@@ -44,13 +42,13 @@ foreach(TAGS_LOOP ${GIT_TAGS_ARRAY})
     endif()
 endforeach(TAGS_LOOP)
 if (NOT DEFINED MAJOR)
-    message(STATUS "CMAKE_SOURCE_DIR is ${CMAKE_SOURCE_DIR}")
+    message(STATUS "${GIT_TAGS_ARRAY}")
     message(FATAL_ERROR "No version found")
 endif()
 
 # Get current branch
 execute_process(COMMAND ${GIT_EXECUTABLE} branch --contains ${GIT_HASH}
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
                 OUTPUT_VARIABLE GIT_BRANCH)
 # string(REGEX REPLACE "\n$" "" GIT_BRANCH "${GIT_BRANCH}")
 if (${GIT_BRANCH} MATCHES "master\n")
@@ -72,7 +70,7 @@ endif()
 
 #check if dirty
 execute_process(COMMAND ${GIT_EXECUTABLE} describe --always --dirty=.dirty
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
                 OUTPUT_VARIABLE GIT_DIRTY)
 string(REGEX REPLACE "\n$" "" GIT_DIRTY "${GIT_DIRTY}")
 if (${GIT_DIRTY} MATCHES "\\.dirty$")
