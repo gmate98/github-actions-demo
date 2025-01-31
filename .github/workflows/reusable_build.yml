@@ -24,6 +24,8 @@ jobs:
         run: |
           cd mcu_test_proj
           rm -rf build
+          cd ./shared/src
+          cmake -P version_output.cmake
           cmake . --preset=${{inputs.toolchain}}-${{inputs.configuration}}
           cmake --build --preset=${{inputs.toolchain}}-${{inputs.configuration}}
       
