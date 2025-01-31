@@ -50,7 +50,7 @@ execute_process(COMMAND ${GIT_EXECUTABLE} branch --contains ${GIT_HASH}
                 WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
                 OUTPUT_VARIABLE GIT_BRANCH)
 # string(REGEX REPLACE "\n$" "" GIT_BRANCH "${GIT_BRANCH}")
-if (${GIT_BRANCH} MATCHES "master\n")
+if (${GIT_BRANCH} MATCHES "main\n")
     set(ON_MASTER TRUE)
 endif()
 if (${GIT_BRANCH} MATCHES "development\n")
