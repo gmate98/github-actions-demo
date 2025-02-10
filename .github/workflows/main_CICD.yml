@@ -40,7 +40,11 @@ on:
 
 jobs:
   Linux-Build:
-    uses: Oragon21/hhla_github_actions@main
+    runs-on: [self-hosted, linux]
+    name: Linux Build
+    steps:
+      - name: Use Custom Action
+        uses: Oragon21/hhla_github_actions@main
 
   Linux-Unit_Test:
     if: ${{github.event_name == 'pull_request' || inputs.run-linux-jobs == true}}
