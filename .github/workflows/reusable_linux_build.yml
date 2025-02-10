@@ -2,10 +2,6 @@ name: Reusable Linux Build
 
 on:
   workflow_call:
-    inputs:
-      run-linux-jobs:
-        required: true
-        type: boolean
 
 jobs:
   Linux-Build:
